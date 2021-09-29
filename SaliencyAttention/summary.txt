@@ -1,0 +1,176 @@
+
+inputs  <class 'tensorflow.python.framework.ops.Tensor'> Tensor("transpose:0", shape=(1, 4, 128, 128, 128), dtype=float32)
+
+layer 1  Tensor("init_conv/Relu:0", shape=(1, 16, 128, 128, 128), dtype=float32)
+
+encoder  0 Tensor("stride2conv_0/Relu:0", shape=(1, 32, 64, 64, 64), dtype=float32)
+
+encoder  1 Tensor("stride2conv_1/Relu:0", shape=(1, 64, 32, 32, 32), dtype=float32)
+
+encoder  2 Tensor("stride2conv_2/Relu:0", shape=(1, 128, 16, 16, 16), dtype=float32)
+
+encoder  3 Tensor("stride2conv_3/Relu:0", shape=(1, 256, 8, 8, 8), dtype=float32)
+
+encoder  4 Tensor("add_9:0", shape=(1, 256, 8, 8, 8), dtype=float32)
+
+decoder UnetUpsample  3 Tensor("up_conv1_3/Relu:0", shape=(1, 128, 16, 16, 16), dtype=float32)
+
+decoder concat  3 Tensor("concat:0", shape=(1, 256, 16, 16, 16), dtype=float32)
+
+lo_conv0_  3 Tensor("lo_conv0_3/Relu:0", shape=(1, 128, 16, 16, 16), dtype=float32)
+
+lo_conv1_  3 Tensor("lo_conv1_3/Relu:0", shape=(1, 128, 16, 16, 16), dtype=float32)
+
+decoder UnetUpsample  2 Tensor("up_conv1_2/Relu:0", shape=(1, 64, 32, 32, 32), dtype=float32)
+
+decoder concat  2 Tensor("concat_1:0", shape=(1, 128, 32, 32, 32), dtype=float32)
+
+lo_conv0_  2 Tensor("lo_conv0_2/Relu:0", shape=(1, 64, 32, 32, 32), dtype=float32)
+
+lo_conv1_  2 Tensor("lo_conv1_2/Relu:0", shape=(1, 64, 32, 32, 32), dtype=float32)
+
+deep_supervision  2 Tensor("up_sampling3d_2/concat_2:0", shape=(1, 4, 64, 64, 64), dtype=float32)
+
+decoder UnetUpsample  1 Tensor("up_conv1_1/Relu:0", shape=(1, 32, 64, 64, 64), dtype=float32)
+
+decoder concat  1 Tensor("concat_2:0", shape=(1, 64, 64, 64, 64), dtype=float32)
+
+lo_conv0_  1 Tensor("lo_conv0_1/Relu:0", shape=(1, 32, 64, 64, 64), dtype=float32)
+
+lo_conv1_  1 Tensor("lo_conv1_1/Relu:0", shape=(1, 32, 64, 64, 64), dtype=float32)
+
+deep_supervision  1 Tensor("up_sampling3d_4/concat_2:0", shape=(1, 4, 128, 128, 128), dtype=float32)
+
+decoder UnetUpsample  0 Tensor("up_conv1_0/Relu:0", shape=(1, 16, 128, 128, 128), dtype=float32)
+
+decoder concat  0 Tensor("concat_3:0", shape=(1, 32, 128, 128, 128), dtype=float32)
+
+lo_conv0_  0 Tensor("lo_conv0_0/Relu:0", shape=(1, 16, 128, 128, 128), dtype=float32)
+
+lo_conv1_  0 Tensor("lo_conv1_0/Relu:0", shape=(1, 16, 128, 128, 128), dtype=float32)
+
+layer final Tensor("final/Identity:0", shape=(1, 4, 128, 128, 128), dtype=float32)
+
+layer final transpose Tensor("transpose_1:0", shape=(1, 128, 128, 128, 4), dtype=float32)
+---------
+Variables: name (type shape) [size]
+---------
+init_conv/kernel:0 (float32_ref 3x3x3x4x16) [1728, bytes: 6912]
+init_conv/bias:0 (float32_ref 16) [16, bytes: 64]
+init_conv/ins_norm/beta:0 (float32_ref 16) [16, bytes: 64]
+init_conv/ins_norm/gamma:0 (float32_ref 16) [16, bytes: 64]
+down0_conv_0/kernel:0 (float32_ref 3x3x3x16x16) [6912, bytes: 27648]
+down0_conv_0/bias:0 (float32_ref 16) [16, bytes: 64]
+down0_conv_0/ins_norm/beta:0 (float32_ref 16) [16, bytes: 64]
+down0_conv_0/ins_norm/gamma:0 (float32_ref 16) [16, bytes: 64]
+down0_conv_1/kernel:0 (float32_ref 3x3x3x16x16) [6912, bytes: 27648]
+down0_conv_1/bias:0 (float32_ref 16) [16, bytes: 64]
+down0_conv_1/ins_norm/beta:0 (float32_ref 16) [16, bytes: 64]
+down0_conv_1/ins_norm/gamma:0 (float32_ref 16) [16, bytes: 64]
+stride2conv_0/kernel:0 (float32_ref 3x3x3x16x32) [13824, bytes: 55296]
+stride2conv_0/bias:0 (float32_ref 32) [32, bytes: 128]
+stride2conv_0/ins_norm/beta:0 (float32_ref 32) [32, bytes: 128]
+stride2conv_0/ins_norm/gamma:0 (float32_ref 32) [32, bytes: 128]
+down1_conv_0/kernel:0 (float32_ref 3x3x3x32x32) [27648, bytes: 110592]
+down1_conv_0/bias:0 (float32_ref 32) [32, bytes: 128]
+down1_conv_0/ins_norm/beta:0 (float32_ref 32) [32, bytes: 128]
+down1_conv_0/ins_norm/gamma:0 (float32_ref 32) [32, bytes: 128]
+down1_conv_1/kernel:0 (float32_ref 3x3x3x32x32) [27648, bytes: 110592]
+down1_conv_1/bias:0 (float32_ref 32) [32, bytes: 128]
+down1_conv_1/ins_norm/beta:0 (float32_ref 32) [32, bytes: 128]
+down1_conv_1/ins_norm/gamma:0 (float32_ref 32) [32, bytes: 128]
+stride2conv_1/kernel:0 (float32_ref 3x3x3x32x64) [55296, bytes: 221184]
+stride2conv_1/bias:0 (float32_ref 64) [64, bytes: 256]
+stride2conv_1/ins_norm/beta:0 (float32_ref 64) [64, bytes: 256]
+stride2conv_1/ins_norm/gamma:0 (float32_ref 64) [64, bytes: 256]
+down2_conv_0/kernel:0 (float32_ref 3x3x3x64x64) [110592, bytes: 442368]
+down2_conv_0/bias:0 (float32_ref 64) [64, bytes: 256]
+down2_conv_0/ins_norm/beta:0 (float32_ref 64) [64, bytes: 256]
+down2_conv_0/ins_norm/gamma:0 (float32_ref 64) [64, bytes: 256]
+down2_conv_1/kernel:0 (float32_ref 3x3x3x64x64) [110592, bytes: 442368]
+down2_conv_1/bias:0 (float32_ref 64) [64, bytes: 256]
+down2_conv_1/ins_norm/beta:0 (float32_ref 64) [64, bytes: 256]
+down2_conv_1/ins_norm/gamma:0 (float32_ref 64) [64, bytes: 256]
+stride2conv_2/kernel:0 (float32_ref 3x3x3x64x128) [221184, bytes: 884736]
+stride2conv_2/bias:0 (float32_ref 128) [128, bytes: 512]
+stride2conv_2/ins_norm/beta:0 (float32_ref 128) [128, bytes: 512]
+stride2conv_2/ins_norm/gamma:0 (float32_ref 128) [128, bytes: 512]
+down3_conv_0/kernel:0 (float32_ref 3x3x3x128x128) [442368, bytes: 1769472]
+down3_conv_0/bias:0 (float32_ref 128) [128, bytes: 512]
+down3_conv_0/ins_norm/beta:0 (float32_ref 128) [128, bytes: 512]
+down3_conv_0/ins_norm/gamma:0 (float32_ref 128) [128, bytes: 512]
+down3_conv_1/kernel:0 (float32_ref 3x3x3x128x128) [442368, bytes: 1769472]
+down3_conv_1/bias:0 (float32_ref 128) [128, bytes: 512]
+down3_conv_1/ins_norm/beta:0 (float32_ref 128) [128, bytes: 512]
+down3_conv_1/ins_norm/gamma:0 (float32_ref 128) [128, bytes: 512]
+stride2conv_3/kernel:0 (float32_ref 3x3x3x128x256) [884736, bytes: 3538944]
+stride2conv_3/bias:0 (float32_ref 256) [256, bytes: 1024]
+stride2conv_3/ins_norm/beta:0 (float32_ref 256) [256, bytes: 1024]
+stride2conv_3/ins_norm/gamma:0 (float32_ref 256) [256, bytes: 1024]
+down4_conv_0/kernel:0 (float32_ref 3x3x3x256x256) [1769472, bytes: 7077888]
+down4_conv_0/bias:0 (float32_ref 256) [256, bytes: 1024]
+down4_conv_0/ins_norm/beta:0 (float32_ref 256) [256, bytes: 1024]
+down4_conv_0/ins_norm/gamma:0 (float32_ref 256) [256, bytes: 1024]
+down4_conv_1/kernel:0 (float32_ref 3x3x3x256x256) [1769472, bytes: 7077888]
+down4_conv_1/bias:0 (float32_ref 256) [256, bytes: 1024]
+down4_conv_1/ins_norm/beta:0 (float32_ref 256) [256, bytes: 1024]
+down4_conv_1/ins_norm/gamma:0 (float32_ref 256) [256, bytes: 1024]
+up_conv1_3/kernel:0 (float32_ref 3x3x3x256x128) [884736, bytes: 3538944]
+up_conv1_3/bias:0 (float32_ref 128) [128, bytes: 512]
+up_conv1_3/ins_norm/beta:0 (float32_ref 128) [128, bytes: 512]
+up_conv1_3/ins_norm/gamma:0 (float32_ref 128) [128, bytes: 512]
+lo_conv0_3/kernel:0 (float32_ref 3x3x3x256x128) [884736, bytes: 3538944]
+lo_conv0_3/bias:0 (float32_ref 128) [128, bytes: 512]
+lo_conv0_3/ins_norm/beta:0 (float32_ref 128) [128, bytes: 512]
+lo_conv0_3/ins_norm/gamma:0 (float32_ref 128) [128, bytes: 512]
+lo_conv1_3/kernel:0 (float32_ref 1x1x1x128x128) [16384, bytes: 65536]
+lo_conv1_3/bias:0 (float32_ref 128) [128, bytes: 512]
+lo_conv1_3/ins_norm/beta:0 (float32_ref 128) [128, bytes: 512]
+lo_conv1_3/ins_norm/gamma:0 (float32_ref 128) [128, bytes: 512]
+up_conv1_2/kernel:0 (float32_ref 3x3x3x128x64) [221184, bytes: 884736]
+up_conv1_2/bias:0 (float32_ref 64) [64, bytes: 256]
+up_conv1_2/ins_norm/beta:0 (float32_ref 64) [64, bytes: 256]
+up_conv1_2/ins_norm/gamma:0 (float32_ref 64) [64, bytes: 256]
+lo_conv0_2/kernel:0 (float32_ref 3x3x3x128x64) [221184, bytes: 884736]
+lo_conv0_2/bias:0 (float32_ref 64) [64, bytes: 256]
+lo_conv0_2/ins_norm/beta:0 (float32_ref 64) [64, bytes: 256]
+lo_conv0_2/ins_norm/gamma:0 (float32_ref 64) [64, bytes: 256]
+lo_conv1_2/kernel:0 (float32_ref 1x1x1x64x64) [4096, bytes: 16384]
+lo_conv1_2/bias:0 (float32_ref 64) [64, bytes: 256]
+lo_conv1_2/ins_norm/beta:0 (float32_ref 64) [64, bytes: 256]
+lo_conv1_2/ins_norm/gamma:0 (float32_ref 64) [64, bytes: 256]
+deep_super_2/kernel:0 (float32_ref 1x1x1x64x4) [256, bytes: 1024]
+deep_super_2/bias:0 (float32_ref 4) [4, bytes: 16]
+up_conv1_1/kernel:0 (float32_ref 3x3x3x64x32) [55296, bytes: 221184]
+up_conv1_1/bias:0 (float32_ref 32) [32, bytes: 128]
+up_conv1_1/ins_norm/beta:0 (float32_ref 32) [32, bytes: 128]
+up_conv1_1/ins_norm/gamma:0 (float32_ref 32) [32, bytes: 128]
+lo_conv0_1/kernel:0 (float32_ref 3x3x3x64x32) [55296, bytes: 221184]
+lo_conv0_1/bias:0 (float32_ref 32) [32, bytes: 128]
+lo_conv0_1/ins_norm/beta:0 (float32_ref 32) [32, bytes: 128]
+lo_conv0_1/ins_norm/gamma:0 (float32_ref 32) [32, bytes: 128]
+lo_conv1_1/kernel:0 (float32_ref 1x1x1x32x32) [1024, bytes: 4096]
+lo_conv1_1/bias:0 (float32_ref 32) [32, bytes: 128]
+lo_conv1_1/ins_norm/beta:0 (float32_ref 32) [32, bytes: 128]
+lo_conv1_1/ins_norm/gamma:0 (float32_ref 32) [32, bytes: 128]
+deep_super_1/kernel:0 (float32_ref 1x1x1x32x4) [128, bytes: 512]
+deep_super_1/bias:0 (float32_ref 4) [4, bytes: 16]
+up_conv1_0/kernel:0 (float32_ref 3x3x3x32x16) [13824, bytes: 55296]
+up_conv1_0/bias:0 (float32_ref 16) [16, bytes: 64]
+up_conv1_0/ins_norm/beta:0 (float32_ref 16) [16, bytes: 64]
+up_conv1_0/ins_norm/gamma:0 (float32_ref 16) [16, bytes: 64]
+lo_conv0_0/kernel:0 (float32_ref 3x3x3x32x16) [13824, bytes: 55296]
+lo_conv0_0/bias:0 (float32_ref 16) [16, bytes: 64]
+lo_conv0_0/ins_norm/beta:0 (float32_ref 16) [16, bytes: 64]
+lo_conv0_0/ins_norm/gamma:0 (float32_ref 16) [16, bytes: 64]
+lo_conv1_0/kernel:0 (float32_ref 1x1x1x16x16) [256, bytes: 1024]
+lo_conv1_0/bias:0 (float32_ref 16) [16, bytes: 64]
+lo_conv1_0/ins_norm/beta:0 (float32_ref 16) [16, bytes: 64]
+lo_conv1_0/ins_norm/gamma:0 (float32_ref 16) [16, bytes: 64]
+final/kernel:0 (float32_ref 1x1x1x16x4) [64, bytes: 256]
+final/bias:0 (float32_ref 4) [4, bytes: 16]
+Total size of variables: 8269676
+Total bytes of variables: 33078704
+(2097152, 4) (2097152,) (2097152,)
+loss  Tensor("dice_loss:0", shape=(), dtype=float32)
+(1, 128, 128, 128, 4) Tensor("dice_loss:0", shape=(), dtype=float32)
