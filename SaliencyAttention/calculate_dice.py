@@ -36,11 +36,6 @@ def visual_metric(path_imgs, path_preds_1,path_preds_2, path_save_compare, path_
         fieldnames = ['ID', 'ET_1','WT_2','TC_4']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-
-
-                    
-
-
         for i_image, ID in enumerate(list_IDs):
 
             ID = ID.split(".nii.gz")[0]
@@ -57,7 +52,7 @@ def visual_metric(path_imgs, path_preds_1,path_preds_2, path_save_compare, path_
 
 
 
-            pred_seg_1 = np.asanyarray(nib.load(path_pred_1).dataobj)
+            pred_seg_1 = np.asanyarray(nib.load(path_pred_1).dataobj
             pred_seg_1[pred_seg_1==4]=3
             pred_seg_2 = np.asanyarray(nib.load(path_pred_2).dataobj)
             pred_seg_2[pred_seg_2==4]=3
@@ -96,22 +91,12 @@ def visual_metric(path_imgs, path_preds_1,path_preds_2, path_save_compare, path_
         print("mean bachground - ncr -  ed - et -: ", mean(all_dice["bachground"]) , mean(all_dice["ncr"]),mean(all_dice["ed"]),mean(all_dice["et"]))
 
 
-# path_imgs = "/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
-# path_truths = "/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
-# path_seg = "/vinai/vuonghn/Research/BraTS/3DUnet-Tensorflow-Brats18/save_pred/seg_nii/train20_set6_lr_0.01_model_60000"
-# path_save_compare = "/vinai/vuonghn/Research/BraTS/3DUnet-Tensorflow-Brats18/save_pred/compare/train20_set6_lr_0.01_model_60000"
 
-# path_imgs = "/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS2020_ValidationData/val"
-# path_truths = None
-# path_seg = "/vinai/vuonghn/Research/BraTS/3DUnet-Tensorflow-Brats18/save_pred/seg_nii/val20_set6_lr_0.01_model_60000_modify_ET4=0"
-# path_save_compare = "/vinai/vuonghn/Research/BraTS/3DUnet-Tensorflow-Brats18/save_pred/compare/val20_set6_lr_0.01_model_60000_modify_ET4=0"
-
-path_imgs = "/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
-path_truths = "/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
-path_seg = "/vinai/vuonghn/Brain_Point/RandLA-Net/Model_log/normalize_xyz/0.01/output/train_test_49600_0.01_1_1_1_1_bs16"
-path_seg2 = "/vinai/vuonghn/Research/BraTS/3DUnet-Tensorflow-Brats18/save_pred/seg_nii/train20_set6_lr_0.01_model_60000"
-# path_save_compare = "/vinai/vuonghn/Brain_Point/RandLA-Net/Model_log/normalize_xyz/0.01/output/visual_train_test_49600_0.01_1_1_1_1_bs16"
-path_save_compare = "/vinai/vuonghn/compare_result/"
+path_imgs = "./Research/BraTS/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
+path_truths = "./Research/BraTS/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
+path_seg = "./Brain_Point/RandLA-Net/Model_log/normalize_xyz/0.01/output/train_test_49600_0.01_1_1_1_1_bs16"
+path_seg2 = "./Research/BraTS/3DUnet-Tensorflow-Brats18/save_pred/seg_nii/train20_set6_lr_0.01_model_60000"
+path_save_compare = "./compare_result/"
 
 
 if  not os.path.exists(path_save_compare):

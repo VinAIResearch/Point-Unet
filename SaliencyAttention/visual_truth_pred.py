@@ -89,59 +89,6 @@ def showImage(image,f=0,seg_gt=None, seg_pd=None):
 #         
     return ani
 
-# def convert5(image,seg_gt=None, seg_pd=None):
-#     maxSize = max(image.shape)
-#     image = fillImage(image,maxSize)
-#     if seg_gt is not None:
-#         seg_gt = fillImage(seg_gt,maxSize)
-#     if seg_pd is not None:
-#         seg_pd = fillImage(seg_pd,maxSize)
-#     img1 = np.stack((image,)*3, axis=-1)
-#     img2 = img1.copy()
-#     img3 = img1.copy()
-
-#     if seg_gt is not None:
-#         img1[np.where(seg_gt==1)] = np.array([255,0,0])
-#         img1[np.where(seg_gt==2)] = np.array([0,255,0])
-#         img1[np.where(seg_gt==3)] = np.array([0,0,255])
-#     if seg_pd is not None:
-#         img3[np.where(seg_pd==1)] = np.array([255,0,0])
-#         img3[np.where(seg_pd==2)] = np.array([0,255,0])
-#         img3[np.where(seg_pd==3)] = np.array([0,0,255])
-#     output = np.concatenate((img2,img1,img3, img3,img3),axis=1)
-#     return output
-
-# def showImage5(image,f=0,seg_gt=None, seg_pd=None):
-#     # img = image[f].copy()
-#     img = image
-#     img = img / np.amax(img) * 255
-#     img = img.astype(np.uint8)
-#     fig = plt.figure(figsize = (25,15))
-#     fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
-#     ims = []
-#     maxSize = max(img.shape)
-#     for i in tqdm(range(maxSize)):
-#         if i >= img.shape[0]:
-#             top = np.zeros([maxSize,5*maxSize,3],dtype=np.uint8)
-#         else:
-#             top = convert5(img[i,:,:],seg_gt[i,:,:],seg_pd[i,:,:])
-#         if i >= img.shape[1]:
-#             mid = np.zeros([maxSize,5*maxSize,3],dtype=np.uint8)
-#         else:
-#             mid = convert5(img[:,i,:],seg_gt[:,i,:],seg_pd[:,i,:])
-#         if i >= img.shape[2]:
-#             bottom = np.zeros([maxSize,5*maxSize,3],dtype=np.uint8)
-#         else:
-#             bottom = convert5(img[:,:,i],seg_gt[:,:,i],seg_pd[:,:,i])
-#         merge = np.concatenate((top,mid,bottom),axis=0)
-#         im = plt.imshow(merge, animated=True,aspect='auto')
-#         plt.axis('off')
-#         ims.append([im])
-        
-#     ani = animation.ArtistAnimation(fig, ims, interval=200, blit=True,
-#                                 repeat_delay=1000)
-# #         
-#     return ani
 
 def convert5(image,seg_gt=None, seg_pd_1=None,seg_pd_2=None):
     maxSize = max(image.shape)
