@@ -16,37 +16,7 @@ import nearest_neighbors.lib.python.nearest_neighbors as nearest_neighbors
 
 
 
-
-class ConfigBraTS_Block64:
-    k_n = 16  # KNN
-    num_layers = 4  # Number of layers
-    num_points = 40960  # Number of input points
-    num_classes = 4  # Number of valid classes
-    sub_grid_size = 0.06  # preprocess_parameter
-
-    batch_size = 2  # batch_size during training
-    val_batch_size = 2  # batch_size during validation and test
-    # train_steps = 500  # Number of steps per epochs
-    # val_steps =  100 # Number of validation steps per epoch
-
-    train_steps = 1000  # Number of steps per epochs
-    val_steps = 300  # Number of validation steps per epoch
-
-    sub_sampling_ratio = [4, 4, 4, 4]  # sampling ratio of random sampling at each layer
-    d_out = [16, 64, 128, 256]  # feature dimension
-    num_sub_points = [num_points // 4, num_points // 16, num_points // 64, num_points // 256]
-
-    noise_init = 3.5  # noise initial parameter
-    max_epoch = 100  # maximum epoch during training
-    learning_rate = 1e-4  # initial learning rate
-    lr_decays = {i: 0.95 for i in range(0, 500)}  # decay rate of learning rate
-
-    train_sum_dir = 'train_log'
-    saving = True
-    saving_path = "/home/ubuntu/Point_Cloud/de_bug"
-    log_file = saving_path + "/train_summary.txt"
-
-class ConfigBraTS20:
+class ConfigBraTS:
     k_n = 16  # KNN
     num_layers = 5  # Number of layers
     # num_points = 450000
@@ -68,10 +38,9 @@ class ConfigBraTS20:
     max_epoch = 5000  # maximum epoch during training
     learning_rate = 1e-4  # initial learning rate # 1e - 4
     lr_decays = {i: 0.95 for i in range(0, 500)}  # decay rate of learning rate
-    path_data = "./Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS20_0.01_float/training"
+    path_data = "../dataset/BraTS2020"
     saving = True  
-    # saving_path = path_data+"output/BraTS18_dense_lr-4/"
-    saving_path = path_data+"Point-Unet/output/BraTS20_CE/"
+    saving_path = "./model_logs/BraTS20"
     train_sum_dir = saving_path+'/train_log/'
     log_file = saving_path + "/train_summary.txt"
 
@@ -99,7 +68,7 @@ class ConfigPancreas:
     learning_rate = 1e-3  # initial learning rate # 1e - 4
     lr_decays = {i: 0.95 for i in range(0, 500)}  # decay rate of learning rate
     saving = True  
-    saving_path = "./Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3"
+    saving_path = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3"
     if not os.path.exists(saving_path):
         os.mkdir(saving_path)
     train_sum_dir = saving_path+'/train_log/'

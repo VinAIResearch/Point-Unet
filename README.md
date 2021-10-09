@@ -35,22 +35,50 @@ $ pip install -r requirements.txt
 * This implementation conduct on machine NVIDIA V100
 
 ## Training code
-### Context-Aware Sampling
-Run command
-```bash
-$ python3 PointSegment/utils/data_prepare_pancreas.py
-```
-* generated results as format *.ply, *pkl, *.npy.s
-### PointSegment
-Training model
-```bash
-$ python3 -B  main_pancreas_step.py --gpu 0 --mode train
-```
+### Setup on Pancreas
 
-Evaluation model
-```bash
-$ python3 -B  main_pancreas_step.py --gpu 0 --mode test 
-```
+* Saliency Attention Map
+    ```bash 
+    $ python3 SaliencyAttention/train.py
+    ```
+* Context-Aware Sampling
+    ```bash 
+    $ python3 PointSegment/utils/data_prepare_pancreas.py
+    ```
+    Generated results as format *.ply, *pkl, *.npy.s
+* PointSegment
+
+    Training model
+    ```bash
+    $ python3 -B  PointSegment/run_Pancreas.py --gpu 0 --mode train
+    ```
+
+    Evaluation model
+    ```bash
+    $ python3 -B  PointSegment/test_Pancreas.py --gpu 0 --mode test 
+    ```
+
+### Setup on BraTS
+* Saliency Attention Map
+    ```bash 
+    $ python3 SaliencyAttention/train.py
+    ```
+* Context-Aware Sampling
+    ```bash 
+    $ python3 PointSegment/utils/data_prepare_brats.py
+    ```
+    Generated results as format *.ply, *pkl, *.npy.s
+* PointSegment
+
+    Training model
+    ```bash
+    $ python3 -B  PointSegment/main_BraTS.py --gpu 0 --mode train
+    ```
+
+    Evaluation model
+    ```bash
+    $ python3 -B  PointSegment/test_BraTS.py --gpu 0 --mode test 
+    ```
 
 ## <a name="result"></a> Result
 

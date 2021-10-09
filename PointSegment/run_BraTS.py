@@ -1,8 +1,8 @@
 from os.path import join
 from RandLANet import Network
-from test_pancreas import ModelTester
+from test_BraTS import ModelTester
 from helper_ply import read_ply
-from helper_tool import ConfigPancreas as cfg
+from helper_tool import ConfigBraTS as cfg
 from helper_tool import DataProcessing as DP
 from helper_tool import Plot
 import tensorflow as tf
@@ -10,34 +10,45 @@ import numpy as np
 import time, pickle, argparse, glob, os
 import random
 
+path_save = "../dataset/BraTS2020/predict_npy"
+if not os.path.exists(path_save):
+    os.makedirs(path_save)
+path_train_ID = "../dataset/BraTS2020/train_BraTS20.txt"
+with open(path_train_ID) as f:
+    content = f.readlines()
+train_IDs = [x.strip() for x in content] 
 
-path_pancreas = "./Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std"
-all_files = glob.glob(join(path_pancreas, 'original_ply', '*.ply'))
+path_val_ID = "../dataset/BraTS2020/valOffline_BraTS20.txt"
+with open(path_val_ID) as f:
+    content = f.readlines()
+val_IDs = [x.strip() for x in content] 
 
 
+print("cfg.path_data ", cfg.path_data)
 
 
-
-
-class Pancreas:
-    def __init__(self, test_area_idx):
-        self.name = 'Pancreas'
-        self.path = path_pancreas
+class BraTS:
+    def __init__(self, Mode):
+        self.name = 'BraTS20'
+        self.path = cfg.path_data
         self.label_to_names = {0: '0',
-                               1: '1'}
-        self.num_classes = len(self.label_to_names)
+                               1: '1',
+                               2: '2',
+                               3: '3' }
+        
+        self.num_point = cfg.num_points
         self.label_values = np.sort([k for k, v in self.label_to_names.items()])
         self.label_to_idx = {l: i for i, l in enumerate(self.label_values)}
         self.ignored_labels = np.array([])
-
-        self.val_split = 'Area_' + str(test_area_idx)
-        self.all_files = all_files
+        self.Mode = Mode
+        self.all_files = glob.glob(join(self.path, 'original_ply', '*.ply'))
+        print("self.all_files  ", len(self.all_files))
         self.val_proj = []
         self.val_labels = []
         self.possibility = {}
         self.min_possibility = {}
-        # self.train_IDs = train_IDs
-        # self.val_IDs = val_IDs
+        self.train_IDs = train_IDs
+        self.val_IDs = val_IDs
         self.input_trees = {'training': [], 'validation': []}
         self.input_colors = {'training': [], 'validation': []}
         self.input_labels = {'training': [], 'validation': []}
@@ -46,28 +57,31 @@ class Pancreas:
         self.weight = {'training': [], 'validation': []}
         self.distribute = np.array([0.0,0.0,0.0,0.0])
         self.max_tumor = 0
-        self.fold = 0
-
         self.load_sub_sampled_clouds(cfg.sub_grid_size)
 
 
 
 
     def load_sub_sampled_clouds(self, sub_grid_size):
-        # tree_path = join(self.path,'input')
-        tree_path = join(self.path,'input_0.01')
-
-        max_mask = 0
-        for i, file_path in enumerate(self.all_files):
-            t0 = time.time()
+        tree_path = join(self.path,'input0.01')
+        for i, IDs in enumerate(self.all_files):
+            # file_path = join(self.path,'original_ply',IDs)
+            file_path = IDs
             cloud_name = file_path.split('/')[-1][:-4]
 
-            if int(cloud_name)%4==self.fold:
-                self.input_names["validation"] += [file_path]
+            if self.Mode == "train":
+                if cloud_name in self.train_IDs:
+                    cloud_split = 'training'
+                else:
+                    cloud_split = 'validation'
+                self.input_names[cloud_split] += [file_path]
             else:
-                self.input_names["training"] += [file_path]
-
-
+                if cloud_name  in self.val_IDs:
+                    cloud_split = 'validation'
+                    xyz_file = os.path.join(tree_path,cloud_name+"_xyz_origin.npy")
+                    xyz_origin = np.load(xyz_file)
+                    self.input_xyz_origin[cloud_split] += [xyz_origin]
+                    self.input_names[cloud_split] += [file_path]
 
 
 
@@ -76,42 +90,45 @@ class Pancreas:
     def get_batch_gen(self, split):
         if split == 'training':
             num_per_epoch = int(len(self.input_names["training"])/cfg.batch_size)*cfg.batch_size
-            # num_per_epoch = 1
+
         elif split == 'validation':
             num_per_epoch = int(len(self.input_names["validation"])/cfg.val_batch_size)*cfg.val_batch_size
-            # num_per_epoch = 1
+
         def spatially_regular_gen():
             # Generator loop
+            print("Status: ",split, "  .Num per epoch: ", num_per_epoch)
             for i in range(num_per_epoch):
                 cloud_idx = i
                 file_path = self.input_names[split][i]
                 full_ply_file = join(file_path)
-                start_time = time.time()
-                # print("read & process data")
+
                 data = read_ply(full_ply_file)
                 queried_pc_xyz =  np.vstack((data['x'], data['y'], data['z'])).T
-
-                sub_colors = data['value'] 
-                sub_colors = np.expand_dims(sub_colors, axis=1)
+                sub_colors = np.vstack((data['t1ce'], data['t1'], data['flair'], data['t2'])).T
                 sub_labels = data['class']
 
-                
-                all_label = sub_labels
+
+
+                masks = sub_labels
+                all_label = masks
                 none_tumor = list(np.where(all_label == 0)[0])
                 tumor = list(np.where(all_label > 0)[0])
                 queried_idx = tumor + random.sample(none_tumor, k=cfg.num_points - len(tumor))
                 queried_idx = np.array(queried_idx)
 
 
- 
+                # Shuffle index
                 queried_idx = DP.shuffle_idx(queried_idx)
                 # Get corresponding points and colors based on the index
                 queried_pc_xyz = queried_pc_xyz[queried_idx]
                 # queried_pc_xyz = queried_pc_xyz - pick_point
                 queried_pc_colors = sub_colors[queried_idx]
                 queried_pc_labels = sub_labels[queried_idx]
-                # print("time process ", time.time()- start_time)
 
+                (unique, counts) = np.unique(queried_pc_labels, return_counts=True)
+                frequencies = np.asarray((unique, counts)).T
+                # print("queried_pc_labels ",len(queried_pc_labels), frequencies)
+                
                 if True:
                     yield (queried_pc_xyz.astype(np.float32),
                            queried_pc_colors.astype(np.float32),
@@ -121,7 +138,7 @@ class Pancreas:
 
         gen_func = spatially_regular_gen
         gen_types = (tf.float32, tf.float32, tf.int32, tf.int32, tf.int32)
-        gen_shapes = ([None, 3], [None, 1], [None], [None], [None])
+        gen_shapes = ([None, 3], [None, 4], [None], [None], [None])
         return gen_func, gen_types, gen_shapes
 
     @staticmethod
@@ -181,7 +198,6 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=int, default=0, help='the number of GPUs to use [default: 0]')
-    parser.add_argument('--test_area', type=int, default=5, help='Which area to use for test, option: 1-6 [default: 5]')
     parser.add_argument('--mode', type=str, default='train', help='options: train, test, vis')
     parser.add_argument('--model_path', type=str, default='None', help='pretrained model path')
     FLAGS = parser.parse_args()
@@ -189,13 +205,12 @@ if __name__ == '__main__':
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ['CUDA_VISIBLE_DEVICES'] = str(FLAGS.gpu)
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
     Mode = FLAGS.mode
 
-    test_area = FLAGS.test_area
-    dataset = Pancreas(test_area)
+    dataset = BraTS(Mode)
     dataset.init_input_pipeline()
 
     if Mode == 'train':
@@ -209,21 +224,10 @@ if __name__ == '__main__':
             chosen_snap = FLAGS.model_path
         else:
             chosen_snapshot = -1
-            # logs = np.sort([os.path.join('./Model_log/BraTS20', f) for f in os.listdir('results') if f.startswith('Log')])
-            # chosen_folder = logs[-1]
-            # snap_path = join(chosen_folder, 'snapshots')
-            # snap_steps = [int(f[:-5].split('-')[-1]) for f in os.listdir(snap_path) if f[-5:] == '.meta']
-            # chosen_step = np.sort(snap_steps)[-1]
-            # chosen_snap = os.path.join(snap_path, 'snap-{:d}'.format(chosen_step))
-        chosen_snap = "./Research/Brain_Point/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS18_0.01_float/Point-Unet/output/BraTS18_dense_log/snapshots/snap-11001"
-
-        tester = ModelTester(model, dataset, restore_snap=chosen_snap)
+        chosen_snap = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS20_0.01_float/Point-Unet/output/BraTS20_CE/snapshots/snap-8261"
+        tester = ModelTester(model, dataset, path_save, restore_snap=chosen_snap)
         tester.test(model, dataset)
     else:
-        ##################
-        # Visualize data #
-        ##################
-
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             sess.run(dataset.train_init_op)

@@ -10,19 +10,20 @@ import nibabel
 import numpy as np
 import random
 import os
-# import SimpleITK as sitk
 import pickle
 from scipy import ndimage
 import copy
 
 
-name_labels = ['bachground','ET']
+# print("path_save", path_save)
+# exit()
+# outdir = "/vinai/vuonghn/Research/Brain_Point/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS18_0.01_float/Point-Unet/debug/"
+
+
 def preprocess_label(label):
     bachground = label == 0
-    ncr = label == 1  # Necrotic and Non-Enhancing Tumor (NCR/NET)
-    ed = label == 2  # Peritumoral Edema (ED)
-    et = label == 3  # GD-enhancing Tumor (ET)
-    return np.array([bachground, ncr, ed, et], dtype=np.uint8)
+    pancreas = label == 1  
+    return np.array([bachground, pancreas], dtype=np.uint8)
 def dice_coefficient(truth, prediction):
     if (np.sum(truth) + np.sum(prediction)) == 0:
         return 1
@@ -43,12 +44,7 @@ def save_to_nii(im, filename, outdir="", mode="image", system="nibabel"):
             os.mkdir("./{}".format(outdir))
         sitk.WriteImage(img, "./{}/{}.nii.gz".format(outdir, filename))
     elif system == "nibabel":
-        # img = np.rot90(im, k=2, axes= (1,2))
-        print("img 0 ", im.shape)
         img = np.moveaxis(im, 0, -1)
-        print("img 1 ", img.shape)
-        # img = np.moveaxis(img, 0, 1)
-        # print("img 2 ", img.shape)
         OUTPUT_AFFINE = np.array(
                 [[ -1,-0,-0,-0],
                  [ -0,-1,-0,239],
@@ -82,6 +78,8 @@ def point2prod(list_point_prod,list_xyz,ID,volume_shape,root_save):
 
     
     volume = np.zeros(volume_shape)
+    
+
     for i in range(len(list_point_prod)):
         volume[list_xyz[i][2]][list_xyz[i][0]][list_xyz[i][1]] = list_point_prod[i]
 
@@ -89,7 +87,6 @@ def point2prod(list_point_prod,list_xyz,ID,volume_shape,root_save):
     path_save  = os.path.join(root_save,ID+".npy")
     print("path_save ", path_save)
     np.save(path_save, volume)
-
 
 
 
@@ -147,7 +144,6 @@ class ModelTester:
                            for l in dataset.input_labels['validation']]
     def test(self, model, dataset, num_votes=100):
         num_votes =1
-
         # Smoothing parameter for votes
         test_smooth = 0.95
 
@@ -174,7 +170,6 @@ class ModelTester:
         last_min = -0.5
 
         count_number = 0
-        # while count_number < len(dataset.all_files):
         while count_number < len(dataset.all_files):
             
 
@@ -188,6 +183,8 @@ class ModelTester:
 
             
             correct = np.sum(np.argmax(stacked_probs, axis=1) == stacked_labels)
+
+            
             truth_seg = preprocess_label(stacked_labels)
             pred_seg = preprocess_label(np.argmax(stacked_probs, axis=1))
            
@@ -201,10 +198,11 @@ class ModelTester:
 
             acc = correct / float(np.prod(np.shape(stacked_labels)))
             
-            
             stacked_probs = np.reshape(stacked_probs, [model.config.val_batch_size, len(stacked_labels),
                                                         model.config.num_classes])
+
             probs = stacked_probs[0, :, :]
+
             
             point2prod(probs,dataset.input_xyz_origin['validation'][cloud_idx[0][0]],dataset.input_names['validation'][cloud_idx[0][0]],dataset.xyz_shape['validation'][cloud_idx[0][0]],self.root_save)
 

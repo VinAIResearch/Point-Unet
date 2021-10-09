@@ -169,7 +169,7 @@ class Network:
                 _, _, summary, l_out, probs, labels, acc = self.sess.run(ops, {self.is_training: True})
                 self.train_writer.add_summary(summary, self.training_step)
                 t_end = time.time()
-                if self.training_step % 1 == 0:
+                if self.training_step % 10 == 0:
                     message = 'Step {:08d} L_out={:5.3f} Acc={:4.2f} ''---{:8.2f} ms/batch'
                     log_out(message.format(self.training_step, l_out, acc, 1000 * (t_end - t_start)), self.Log_file)
                 self.training_step += 1
@@ -217,7 +217,7 @@ class Network:
         val_total_seen = 0
 
         for step_id in range(self.config.val_steps):
-            if step_id % 50 == 0:
+            if step_id % 10 == 0:
                 print(str(step_id) + ' / ' + str(self.config.val_steps))
             try:
                 ops = (self.prob_logits, self.labels, self.accuracy)
