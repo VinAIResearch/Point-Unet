@@ -3,3 +3,5 @@
 *.npy
 *.nii.gz
 *.csv
+PointSegment/__pycache__/*
+.DS_Store
