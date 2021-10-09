@@ -12,7 +12,7 @@ Point-Unet is a point-based volumetric segmentation frame- work with three main 
 ![DETR](figure/flowchart.jpg)
 
 
-Details of the Point-Unet model architecture and experimental results can be found in our [following paper](https://rdcu.be/cyhME). Please cite our paper when Point-Unet is used to help your research.
+Details of the Point-Unet model architecture and experimental results can be found in our [following paper](https://rdcu.be/cyhME). Please cite our paper when Point-Unet is used to help your research. This repository gorrow a lot of codes from [brats17](https://github.com/taigw/brats17/) and [RandLA-Net](https://github.com/QingyongHu/RandLA-Net).
 
 ```
 @inproceedings{ho2021point,
@@ -38,46 +38,82 @@ $ pip install -r requirements.txt
 ### Setup on Pancreas
 
 * Saliency Attention Map
+
+    Train attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py
+    $ python3 SaliencyAttention/train.py --logdir=./train_log/unet3d --gpu 0
+    ```
+    Predict attention maps:
+    ```bash 
+    $ python3 SaliencyAttention/train.py --load={path_model} --gpu 0 --predict
     ```
 * Context-Aware Sampling
+
+    Generate Binary Map:
     ```bash 
-    $ python3 PointSegment/utils/data_prepare_pancreas.py
+    $ python3 utils/genBinaryMap.py
     ```
-    Generated results as format *.ply, *pkl, *.npy.s
+    Generate Point Cloud data (Generate results as format *.ply, *pkl, *.npy):
+    ```bash 
+    $ python3 PointSegment/utils/dataPreparePancreas.py
+    ```
+   
 * PointSegment
 
-    Training model
+    Training model: 
     ```bash
-    $ python3 -B  PointSegment/run_Pancreas.py --gpu 0 --mode train
+    $ python3 -B  PointSegment/runPancreas.py --gpu 0 --mode train
     ```
 
-    Evaluation model
+    Evaluation model: 
     ```bash
-    $ python3 -B  PointSegment/test_Pancreas.py --gpu 0 --mode test 
+    $ python3 -B  PointSegment/runPancreas.py --gpu 0 --mode test 
     ```
+    Generate Segmentation Result (Generate segmentation results as format *.nii.gz):
+    ```bash
+    $ python3 -B  utils/genSegmentationPancreas.py
+    ```
+    
+
+
 
 ### Setup on BraTS
 * Saliency Attention Map
+
+    Train Attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py
+    $ python3 SaliencyAttention/train.py --logdir=./train_log/unet3d --gpu 0
+    ```
+    Predict Attention maps:
+    ```bash 
+    $ python3 SaliencyAttention/train.py --load={path_model} --gpu 0 --predict
     ```
 * Context-Aware Sampling
+
+    Generate Binary Map:
     ```bash 
-    $ python3 PointSegment/utils/data_prepare_brats.py
+    $ python3 utils/genBinaryMap.py
     ```
-    Generated results as format *.ply, *pkl, *.npy.s
+    Generate Point Cloud data:
+    ```bash 
+    $ python3 PointSegment/utils/dataPrepareBraTS.py
+    ```
+    Generated results as format *.ply, *pkl, *.npy.
 * PointSegment
 
     Training model
     ```bash
-    $ python3 -B  PointSegment/main_BraTS.py --gpu 0 --mode train
+    $ python3 -B  PointSegment/runBraTS.py --gpu 0 --mode train
     ```
 
     Evaluation model
     ```bash
-    $ python3 -B  PointSegment/test_BraTS.py --gpu 0 --mode test 
+    $ python3 -B  PointSegment/runBraTS.py--gpu 0 --mode test 
+    ```
+
+    Generate Segmentation Result (Generate segmentation results as format *.nii.gz):
+    ```bash
+    $ python3 -B  utils/genSegmentationBraTS.py
     ```
 
 ## <a name="result"></a> Result

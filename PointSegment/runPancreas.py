@@ -1,6 +1,6 @@
 from os.path import join
 from RandLANet import Network
-from test_Pancreas import ModelTester
+from testPancreas import ModelTester
 from helper_ply import read_ply
 from helper_tool import ConfigPancreas as cfg
 from helper_tool import DataProcessing as DP
