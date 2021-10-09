@@ -7,11 +7,14 @@ from collections import namedtuple
 import numpy as np
 #import cv2
 import time
+import scipy.ndimage.morphology
+from skimage import measure, filters
 
 from tensorpack.utils.utils import get_tqdm_kwargs
 import config
 from utils import *
 import nibabel as nib
+import SimpleITK as sitk
 from scipy.special import softmax
 
 def post_processing(pred1, temp_weight):
@@ -100,7 +103,34 @@ def batch_segmentation(temp_imgs, model_func, data_shape=[19, 180, 160]):
 def overlapping_inference(temp_imgs, model_func, data_shape):
     start = time.time()
     crop_size = data_shape
-    xstep = ystep = zstep = 64
+
+    #full size
+    xstep = 48
+    ystep = zstep = 118
+    # xstep = 32
+    # ystep = zstep = 51
+
+    # #Margin 20
+    # xstep = 32
+    # ystep = zstep = 40
+
+    # #Margin 40
+    # xstep = 48
+    # ystep = zstep = 81
+    # xstep = 40
+    # ystep = zstep = 54
+
+    # downsample full size
+    # xstep = 16
+    # ystep = zstep = 32
+
+    # downsample margin 20
+    # xstep = 6
+    # ystep = zstep = 1
+
+    # downsample margin 40
+    # xstep = 10
+    # ystep = zstep = 1
 
     image = temp_imgs
     image = np.array(image)
@@ -126,7 +156,7 @@ def overlapping_inference(temp_imgs, model_func, data_shape):
                 deep = deep_slices[j]
                 height = height_slices[k]
                 width = width_slices[l]
-                image_input = np.zeros(shape = (config.BATCH_SIZE,) + tuple(data_shape) + (4,))
+                image_input = np.zeros(shape = (config.BATCH_SIZE,) + tuple(data_shape) + (1,))
                 image_crop = image[:, deep   : deep   + crop_size[0],
                                             height : height + crop_size[1],
                                             width  : width  + crop_size[2], :]
@@ -137,7 +167,7 @@ def overlapping_inference(temp_imgs, model_func, data_shape):
                 #----------------Average-------------------------------
                 whole_pred[:, deep: deep + crop_size[0],
                             height: height + crop_size[1],
-                            width: width + crop_size[2], :] += pred[:, :image_crop.shape[1], :image_crop.shape[2], :image_crop.shape[3], :]
+                            width: width + crop_size[2], :] += pred[0, :image_crop.shape[1], :image_crop.shape[2], :image_crop.shape[3], :]
 
                 count_used[deep: deep + crop_size[0],
                             height: height + crop_size[1],
@@ -253,14 +283,81 @@ def segment_one_image_dynamic(data, create_model_func):
         
     return final_label, final_probs
 
+# def segment_one_image(data, model_func, is_online=False):
+#     """
+#     perform inference and unpad the volume to original shape
+#     """
+#     img = data['images']
+#     temp_weight = data['weights'][:,:,:,0]
+#     temp_size = data['original_shape']
+#     temp_bbox = data['bbox']
+#     # Ensure online evaluation match the training patch shape...should change in future 
+#     batch_data_shape = config.PATCH_SIZE if is_online else config.INFERENCE_PATCH_SIZE
+    
+#     img = img[np.newaxis, ...] # add batch dim
+
+#     im = img
+
+#     if config.MULTI_VIEW:
+#         im_ax = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
+#         im_ax = transpose_volumes(im_ax, 'axial')
+#         prob1_ax = batch_segmentation(im_ax, model_func[0], data_shape=batch_data_shape)
+
+#         im_sa = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
+#         im_sa = transpose_volumes(im_sa, 'sagittal')
+#         prob1_sa = batch_segmentation(im_sa, model_func[1], data_shape=batch_data_shape)
+
+#         im_co = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
+#         im_co = transpose_volumes(im_co, 'coronal')
+#         prob1_co = batch_segmentation(im_co, model_func[2], data_shape=batch_data_shape)
+
+#         prob1 = (prob1_ax + np.transpose(prob1_sa, (1, 2, 0, 3)) + np.transpose(prob1_co, (1, 0, 2, 3))) / 3.0
+#         pred1 = np.argmax(prob1, axis=-1)
+        
+#     else:
+#         im_pred = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
+#         im_pred = transpose_volumes(im_pred, config.DIRECTION)
+#         # prob1 = batch_segmentation(im_pred, model_func[0], data_shape=batch_data_shape)
+#         prob1 = overlapping_inference(im_pred, model_func[0], data_shape=batch_data_shape)
+#         if config.DIRECTION == 'sagittal':
+#             prob1 = np.transpose(prob1, (1, 2, 0, 3))
+#         elif config.DIRECTION == 'coronal':
+#             prob1 = np.transpose(prob1, (1, 0, 2, 3))
+#         else:
+#             prob1 = prob1
+        
+#         if config.NUM_CLASS == 1:
+#             pred1 = prob1 >= 0.5
+#             pred1 = np.squeeze(pred1, axis=-1)
+#         else:
+#             pred1 = np.argmax(prob1, axis=-1)
+    
+#     pred1[pred1 == 3] = 4
+#     # pred1 should be the same as cropped brain region
+#     if config.ADVANCE_POSTPROCESSING:
+#         out_label = post_processing(pred1, temp_weight)
+#     else:
+#         out_label = pred1
+#     out_label = np.asarray(out_label, np.int16)
+
+#     if 'is_flipped' in data and data['is_flipped']:
+#         out_label = np.flip(out_label, axis=-1)
+#         prob1 = np.flip(prob1, axis=2) # d, h, w, num_class
+    
+#     final_label = np.zeros(temp_size, np.int16)
+#     final_label = set_ND_volume_roi_with_bounding_box_range(final_label, temp_bbox[0], temp_bbox[1], out_label)
+
+#     final_probs = np.zeros(list(temp_size) + [config.NUM_CLASS], np.float32)
+#     final_probs = set_ND_volume_roi_with_bounding_box_range(final_probs, temp_bbox[0]+[0], temp_bbox[1]+[config.NUM_CLASS - 1], prob1)
+        
+#     return final_label, final_probs
+
 def segment_one_image(data, model_func, is_online=False):
     """
     perform inference and unpad the volume to original shape
     """
     img = data['images']
     temp_weight = data['weights'][:,:,:,0]
-    temp_size = data['original_shape']
-    temp_bbox = data['bbox']
     # Ensure online evaluation match the training patch shape...should change in future 
     batch_data_shape = config.PATCH_SIZE if is_online else config.INFERENCE_PATCH_SIZE
     
@@ -268,44 +365,41 @@ def segment_one_image(data, model_func, is_online=False):
 
     im = img
 
-    if config.MULTI_VIEW:
-        im_ax = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
-        im_ax = transpose_volumes(im_ax, 'axial')
-        prob1_ax = batch_segmentation(im_ax, model_func[0], data_shape=batch_data_shape)
-
-        im_sa = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
-        im_sa = transpose_volumes(im_sa, 'sagittal')
-        prob1_sa = batch_segmentation(im_sa, model_func[1], data_shape=batch_data_shape)
-
-        im_co = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
-        im_co = transpose_volumes(im_co, 'coronal')
-        prob1_co = batch_segmentation(im_co, model_func[2], data_shape=batch_data_shape)
-
-        prob1 = (prob1_ax + np.transpose(prob1_sa, (1, 2, 0, 3)) + np.transpose(prob1_co, (1, 0, 2, 3))) / 3.0
-        pred1 = np.argmax(prob1, axis=-1)
-        
+    im_pred = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
+    im_pred = transpose_volumes(im_pred, config.DIRECTION)
+    # prob1 = batch_segmentation(im_pred, model_func[0], data_shape=batch_data_shape)
+    prob1 = overlapping_inference(im_pred, model_func[0], data_shape=batch_data_shape)
+    if config.DIRECTION == 'sagittal':
+        prob1 = np.transpose(prob1, (1, 2, 0, 3))
+    elif config.DIRECTION == 'coronal':
+        prob1 = np.transpose(prob1, (1, 0, 2, 3))
     else:
-        im_pred = np.transpose(im[0], [3, 0 ,1, 2]) # mod, d, h, w
-        im_pred = transpose_volumes(im_pred, config.DIRECTION)
-        # prob1 = batch_segmentation(im_pred, model_func[0], data_shape=batch_data_shape)
-        prob1 = overlapping_inference(im_pred, model_func[0], data_shape=batch_data_shape)
-        if config.DIRECTION == 'sagittal':
-            prob1 = np.transpose(prob1, (1, 2, 0, 3))
-        elif config.DIRECTION == 'coronal':
-            prob1 = np.transpose(prob1, (1, 0, 2, 3))
-        else:
-            prob1 = prob1
-        
-        if config.NUM_CLASS == 1:
-            pred1 = prob1 >= 0.5
-            pred1 = np.squeeze(pred1, axis=-1)
-        else:
-            pred1 = np.argmax(prob1, axis=-1)
+        prob1 = prob1
     
-    pred1[pred1 == 3] = 4
+    if config.NUM_CLASS == 1:
+        pred1 = prob1 >= 0.5
+        pred1 = np.squeeze(pred1, axis=-1)
+    else:
+        # prob1[:,:,:,1] = prob1[:,:,:,1] + 0.2
+        pred1 = np.argmax(prob1, axis=-1)
+
     # pred1 should be the same as cropped brain region
     if config.ADVANCE_POSTPROCESSING:
-        out_label = post_processing(pred1, temp_weight)
+        # all_labels = measure.label(pred1, connectivity=3)
+        # props = measure.regionprops(all_labels)
+        # props.sort(key=lambda x: x.area, reverse=True)
+        # thresholded_mask = np.zeros(pred1.shape)
+
+        # if len(props) >= 2:
+        #     if props[0].area / props[1].area > 5:  # if the largest is way larger than the second largest
+        #         thresholded_mask[all_labels == props[0].label] = 1  # only turn on the largest component
+        #     else:
+        #         thresholded_mask[all_labels == props[0].label] = 1  # turn on two largest components
+        #         thresholded_mask[all_labels == props[1].label] = 1
+        # elif len(props):
+        #     thresholded_mask[all_labels == props[0].label] = 1
+
+        out_label = scipy.ndimage.morphology.binary_fill_holes(pred1).astype(np.uint8)
     else:
         out_label = pred1
     out_label = np.asarray(out_label, np.int16)
@@ -313,14 +407,8 @@ def segment_one_image(data, model_func, is_online=False):
     if 'is_flipped' in data and data['is_flipped']:
         out_label = np.flip(out_label, axis=-1)
         prob1 = np.flip(prob1, axis=2) # d, h, w, num_class
-    
-    final_label = np.zeros(temp_size, np.int16)
-    final_label = set_ND_volume_roi_with_bounding_box_range(final_label, temp_bbox[0], temp_bbox[1], out_label)
-
-    final_probs = np.zeros(list(temp_size) + [config.NUM_CLASS], np.float32)
-    final_probs = set_ND_volume_roi_with_bounding_box_range(final_probs, temp_bbox[0]+[0], temp_bbox[1]+[config.NUM_CLASS - 1], prob1)
         
-    return final_label, final_probs
+    return out_label, prob1
 
 def dice_of_brats_data_set(gt, pred, type_idx):
     dice_all_data = []
@@ -343,6 +431,20 @@ def dice_of_brats_data_set(gt, pred, type_idx):
             #for label in [1, 2, 3, 4]: # dice of each class
             temp_dice = binary_dice3d(s_volume == 4, g_volume == 4)
             dice_one_volume = [temp_dice]
+        dice_all_data.append(dice_one_volume)
+    return dice_all_data
+
+def dice_of_pancreas(gt, pred, type_idx):
+    dice_all_data = []
+    for i in range(len(gt)):
+        g_volume = gt[i]
+        s_volume = pred[i]
+        dice_one_volume = []
+        if(type_idx ==0): # whole tumor
+            temp_dice = binary_dice3d(s_volume, g_volume)
+            dice_one_volume = [temp_dice]
+        else:
+            pass
         dice_all_data.append(dice_one_volume)
     return dice_all_data
 
@@ -379,6 +481,65 @@ def eval_brats(df, detect_func, with_gt=True):
     for type_idx in range(class_num):
         dice = dice_of_brats_data_set(gts, results, type_idx)
         dice = np.asarray(dice)
+        dice_mean = dice.mean(axis = 0)
+        dice_std  = dice.std(axis = 0)
+        test_type = test_types[type_idx]
+        ret[test_type] = dice_mean[0]
+        print('tissue type', test_type)
+        print('dice mean', dice_mean)
+    return ret
+
+def eval_pancreas(df, detect_func, with_gt=True):
+    """
+    evalutation
+    """
+    df.reset_state()
+    gts = []
+    results = []
+    if not os.path.isdir(os.path.join(config.BASEDIR, 'probs')):
+        os.mkdir(os.path.join(config.BASEDIR, 'probs'))
+    if not os.path.isdir(os.path.join(config.BASEDIR, 'predictions')):
+        os.mkdir(os.path.join(config.BASEDIR, 'predictions'))
+    with tqdm.tqdm(total=df.size(), **get_tqdm_kwargs()) as pbar:
+        for filename, image_id, data in df.get_data():
+            probs_path = os.path.join(config.BASEDIR, 'probs', filename.split('/')[-1].replace('nii.gz', 'npy'))
+            # print(probs_path)
+            final_label, probs = detect_func(data)
+
+            # ct = sitk.ReadImage(filename, sitk.sitkInt16)
+            # new_seg = sitk.GetImageFromArray(final_label)
+
+            # new_seg.SetDirection(ct.GetDirection())
+            # new_seg.SetOrigin(ct.GetOrigin())
+            # new_seg.SetSpacing((ct.GetSpacing()[0], ct.GetSpacing()[1], ct.GetSpacing()[2]))
+
+            # sitk.WriteImage(new_seg, os.path.join(config.BASEDIR, 'predictions', filename.split('/')[-1].replace('PANCREAS_', 'label')))
+            # np.save(probs_path, probs)
+            if config.TEST_FLIP:
+                pred_flip, probs_flip = detect_func(flip_lr(data))
+                final_prob = (probs + probs_flip) / 2.0
+                pred = np.argmax(final_prob, axis=-1)
+                pred[pred == 3] = 4
+                if config.ADVANCE_POSTPROCESSING:
+                    pred = crop_ND_volume_with_bounding_box(pred, data['bbox'][0], data['bbox'][1])
+                    pred = post_processing(pred, data['weights'][:,:,:,0])
+                    pred = np.asarray(pred, np.int16)
+                    final_label = np.zeros(data['original_shape'], np.int16)
+                    final_label = set_ND_volume_roi_with_bounding_box_range(final_label, data['bbox'][0], data['bbox'][1], pred)
+                else:
+                    final_label = pred
+            gt = np.squeeze(data['labels'])
+            gts.append(gt)
+            results.append(final_label)
+            pbar.update()
+    test_types = ['pancreas']
+    ret = {}
+    class_num = config.NUM_CLASS if config.NUM_CLASS == 1 else config.NUM_CLASS - 1
+    for type_idx in range(class_num):
+        dice = dice_of_pancreas(gts, results, type_idx)
+        dice = np.asarray(dice)
+        for score in dice:
+            print(score)
         dice_mean = dice.mean(axis = 0)
         dice_std  = dice.std(axis = 0)
         test_type = test_types[type_idx]

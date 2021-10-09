@@ -11,7 +11,7 @@ from tensorpack.utils.argtools import memoized, log_once
 from tensorpack.dataflow import (ProxyDataFlow,
     MapData, TestDataSpeed, MultiProcessMapData, MultiThreadMapData,
     MapDataComponent, DataFromList, PrefetchDataZMQ, MultiProcessMapDataZMQ)
-from  data_loader import BRATS_SEG
+from  data_loader import BRATS_SEG, PANCREAS_SEG
 import config
 from tensorpack.dataflow import RNGDataFlow
 import tensorflow as tf
@@ -213,7 +213,7 @@ def sampler3d(volume_list, label, weight):
     # other meta info ?
     return batch
 
-def sampler3d_whole(volume_list, label, weight, original_shape, bbox):
+def sampler3d_whole(volume_list, label, weight, original_shape=None, bbox=None):
     """
     mods = sorted(im.keys())
     volume_list = []
@@ -236,28 +236,80 @@ def sampler3d_whole(volume_list, label, weight, original_shape, bbox):
     batch = {}
     axis = [1,2,3,0] #[1,2,3,0] [d, h, w, modalities]
     batch['images']  = np.transpose(sub_data, axis)
+    batch['labels'] = np.transpose(label[np.newaxis, ...], axis)
     batch['weights'] = np.transpose(weight[np.newaxis, ...], axis)
     batch['original_shape'] = original_shape
     batch['bbox'] = bbox
     
     return batch
 
+# def get_train_dataflow(add_mask=True):
+#     """
+    
+#     """
+#     if config.CROSS_VALIDATION:
+#         imgs = BRATS_SEG.load_from_file(config.BASEDIR, config.TRAIN_DATASET)
+#     else:
+#         if isinstance(config.BASEDIR, (list, tuple)):
+#             imgs = []
+#             for basedir in config.BASEDIR:
+#                 imgs.extend(BRATS_SEG.load_many(
+#                     basedir, config.TRAIN_DATASET, add_gt=False, add_mask=add_mask))
+
+#         else:
+#             imgs = BRATS_SEG.load_many(
+#                 config.BASEDIR, config.TRAIN_DATASET, add_gt=False, add_mask=add_mask)
+#     # no filter for training
+#     imgs = list(imgs) # dict of path imgs
+
+#     ds = DataFromList(imgs, shuffle=True)
+    
+#     def preprocess(data):
+#         if config.NO_CACHE:
+#             fname, gt, im = data['file_name'], data['gt'], data['image_data']
+#             volume_list, label, weight, _, _ = crop_brain_region(im, gt)
+#             batch = sampler3d(volume_list, label, weight)
+            
+#         else:
+#             volume_list, label, weight, _, _ = data['preprocessed']
+#             # volume_list = [volume_list[0],volume_list[1],volume_list[2],volume_list[3],volume_list[0],volume_list[1],volume_list[2],volume_list[3]]
+
+#             batch = sampler3d(volume_list, label, weight)
+#         if config.MIXUP:
+#             #Change label to one hot
+#             g = batch['labels'].reshape([-1])
+#             if g.shape[-1] == 1:
+#                 g = np.squeeze(g, axis=-1) # (nvoxel, )
+#             g = g.astype('int64')
+#             one_hot = np.zeros((g.size, config.NUM_CLASS), dtype=np.float32)
+#             one_hot[np.arange(g.size), g] = 1
+#             batch['labels'] = one_hot.reshape((128, 128, 128, 4))
+
+#         # print("batch['labels'] ", batch['labels'].shape, type(batch['labels'][0][0][0][0]))
+#         # return None
+#         return [batch['images'], batch['weights'], batch['labels']]
+    
+  
+
+#     ds = BatchData(MultiProcessMapDataZMQ(ds, nr_proc=2, map_func=preprocess, buffer_size=8), config.BATCH_SIZE)
+#     #ds = BatchData(MultiThreadMapData(ds, nr_thread=4, map_func=preprocess, buffer_size=24), config.BATCH_SIZE)
+    
+#     #ds = PrefetchDataZMQ(ds, 6)
+#     return ds
+
 def get_train_dataflow(add_mask=True):
     """
     
     """
-    if config.CROSS_VALIDATION:
-        imgs = BRATS_SEG.load_from_file(config.BASEDIR, config.TRAIN_DATASET)
-    else:
-        if isinstance(config.BASEDIR, (list, tuple)):
-            imgs = []
-            for basedir in config.BASEDIR:
-                imgs.extend(BRATS_SEG.load_many(
-                    basedir, config.TRAIN_DATASET, add_gt=False, add_mask=add_mask))
+    if isinstance(config.BASEDIR, (list, tuple)):
+        imgs = []
+        for basedir in config.BASEDIR:
+            imgs.extend(PANCREAS_SEG.load_many(
+                basedir, config.TRAIN_DATASET, add_gt=False, add_mask=add_mask))
 
-        else:
-            imgs = BRATS_SEG.load_many(
-                config.BASEDIR, config.TRAIN_DATASET, add_gt=False, add_mask=add_mask)
+    else:
+        imgs = PANCREAS_SEG.load_many(
+            config.BASEDIR, config.TRAIN_DATASET, add_gt=False, add_mask=add_mask)
     # no filter for training
     imgs = list(imgs) # dict of path imgs
 
@@ -266,11 +318,11 @@ def get_train_dataflow(add_mask=True):
     def preprocess(data):
         if config.NO_CACHE:
             fname, gt, im = data['file_name'], data['gt'], data['image_data']
-            volume_list, label, weight, _, _ = crop_brain_region(im, gt)
+            volume_list, label, weight = load_pancreas_img(im, gt)
             batch = sampler3d(volume_list, label, weight)
             
         else:
-            volume_list, label, weight, _, _ = data['preprocessed']
+            volume_list, label, weight = data['preprocessed']
             # volume_list = [volume_list[0],volume_list[1],volume_list[2],volume_list[3],volume_list[0],volume_list[1],volume_list[2],volume_list[3]]
 
             batch = sampler3d(volume_list, label, weight)
@@ -287,8 +339,6 @@ def get_train_dataflow(add_mask=True):
         # print("batch['labels'] ", batch['labels'].shape, type(batch['labels'][0][0][0][0]))
         # return None
         return [batch['images'], batch['weights'], batch['labels']]
-    
-  
 
     ds = BatchData(MultiProcessMapDataZMQ(ds, nr_proc=2, map_func=preprocess, buffer_size=8), config.BATCH_SIZE)
     #ds = BatchData(MultiThreadMapData(ds, nr_thread=4, map_func=preprocess, buffer_size=24), config.BATCH_SIZE)
@@ -296,19 +346,55 @@ def get_train_dataflow(add_mask=True):
     #ds = PrefetchDataZMQ(ds, 6)
     return ds
 
-def get_eval_dataflow():
-    if config.CROSS_VALIDATION:
-        imgs = BRATS_SEG.load_from_file(config.BASEDIR, config.VAL_DATASET)
-    else:
-        if isinstance(config.BASEDIR, (list, tuple)):
-            imgs = []
-            for basedir in config.BASEDIR:
-                imgs.extend(BRATS_SEG.load_many(
-                    basedir, config.VAL_DATASET, add_gt=False))
+# def get_eval_dataflow():
+#     if config.CROSS_VALIDATION:
+#         imgs = BRATS_SEG.load_from_file(config.BASEDIR, config.VAL_DATASET)
+#     else:
+#         if isinstance(config.BASEDIR, (list, tuple)):
+#             imgs = []
+#             for basedir in config.BASEDIR:
+#                 imgs.extend(BRATS_SEG.load_many(
+#                     basedir, config.VAL_DATASET, add_gt=False))
 
-        else:
-            imgs = BRATS_SEG.load_many(
-                config.BASEDIR, config.VAL_DATASET, add_gt=False)
+#         else:
+#             imgs = BRATS_SEG.load_many(
+#                 config.BASEDIR, config.VAL_DATASET, add_gt=False)
+#     # no filter for training
+#     if config.NO_CACHE:
+#         ds = DataFromListOfDict(imgs, ['file_name', 'id', 'image_data', 'gt'])
+#     else:
+#         ds = DataFromListOfDict(imgs, ['file_name', 'id', 'preprocessed'])
+
+#     def f(data):
+#         volume_list, label, weight, original_shape, bbox = data
+#         batch = sampler3d_whole(volume_list, label, weight, original_shape, bbox)
+#         return batch
+
+#     def preprocess(data):
+#         gt, im = data[-1], data[-2]
+#         volume_list, label, weight, original_shape, bbox = crop_brain_region(im, gt)
+#         batch = sampler3d_whole(volume_list, label, weight, original_shape, bbox)
+        
+#         return [data[0], data[1], batch]
+    
+#     if config.NO_CACHE:
+#         ds = MultiProcessMapDataZMQ(ds, nr_proc=1, map_func=preprocess, buffer_size=config.BATCH_SIZE, strict=True)
+#         #ds = MultiThreadMapData(ds, nr_thread=1, map_func=preprocess, buffer_size=4)
+#     else:
+#         ds = MapDataComponent(ds, f, 2)
+#     #ds = PrefetchDataZMQ(ds, 1)
+#     return ds
+
+def get_eval_dataflow():
+    if isinstance(config.BASEDIR, (list, tuple)):
+        imgs = []
+        for basedir in config.BASEDIR:
+            imgs.extend(PANCREAS_SEG.load_many(
+                basedir, config.VAL_DATASET, add_gt=False))
+
+    else:
+        imgs = PANCREAS_SEG.load_many(
+            config.BASEDIR, config.VAL_DATASET, add_gt=False)
     # no filter for training
     if config.NO_CACHE:
         ds = DataFromListOfDict(imgs, ['file_name', 'id', 'image_data', 'gt'])
@@ -316,19 +402,19 @@ def get_eval_dataflow():
         ds = DataFromListOfDict(imgs, ['file_name', 'id', 'preprocessed'])
 
     def f(data):
-        volume_list, label, weight, original_shape, bbox = data
-        batch = sampler3d_whole(volume_list, label, weight, original_shape, bbox)
+        volume_list, label, weight = data
+        batch = sampler3d_whole(volume_list, label, weight)
         return batch
 
     def preprocess(data):
         gt, im = data[-1], data[-2]
-        volume_list, label, weight, original_shape, bbox = crop_brain_region(im, gt)
-        batch = sampler3d_whole(volume_list, label, weight, original_shape, bbox)
+        volume_list, label, weight = load_pancreas_img(im, gt)
+        batch = sampler3d_whole(volume_list, label, weight)
         
         return [data[0], data[1], batch]
     
     if config.NO_CACHE:
-        ds = MultiProcessMapDataZMQ(ds, nr_proc=1, map_func=preprocess, buffer_size=config.BATCH_SIZE, strict=True)
+        ds = MultiProcessMapDataZMQ(ds, nr_proc=1, map_func=preprocess, buffer_size=1, strict=True)
         #ds = MultiThreadMapData(ds, nr_thread=1, map_func=preprocess, buffer_size=4)
     else:
         ds = MapDataComponent(ds, f, 2)

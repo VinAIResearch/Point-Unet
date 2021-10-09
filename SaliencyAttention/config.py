@@ -42,41 +42,41 @@ NO_CACHE = True
 # if NO_CACHE = False, we load pre-processed volume into memory to accelerate training.
 # set True when system memory loading is too high
 ###
-TEST_FLIP = True
+TEST_FLIP = False
 # Test time augmentation
 DYNAMIC_SHAPE_PRED = False
 # change PATCH_SIZE in inference if cropped brain region > PATCH_SIZE
 ADVANCE_POSTPROCESSING = False
-BATCH_SIZE = 1
-PATCH_SIZE = [128, 128, 128]
-INFERENCE_PATCH_SIZE = [128, 128, 128]
+BATCH_SIZE = 2
+PATCH_SIZE = [64, 160, 160]
+INFERENCE_PATCH_SIZE = [64, 160, 160]
 
 # PATCH_SIZE = [64, 64, 64]
 # INFERENCE_PATCH_SIZE = [64, 64, 64]
 
 INTENSITY_NORM = 'modality' # different norm method
-STEP_PER_EPOCH = 500
-EVAL_EPOCH = 5
+STEP_PER_EPOCH = 250
+EVAL_EPOCH = 10
 MAX_EPOCH = 200
 
 #STEP_PER_EPOCH = 200
 #EVAL_EPOCH = 1000
 #MAX_EPOCH = 20
 
-#BASEDIR = "/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS_2018_Data_Training" #'/data/dataset/BRATS2018/'
+BASEDIR = "../Pancreas-CT_full_size"
 #BASEDIR = ["datasets/BraTS2020/", 'datasets/MICCAI_BraTS_2018_Data_Training/', 'datasets/MICCAI_BraTS_2019_Data_Training/']
-BASEDIR = ["../datasets/BraTS2020/", '../datasets/MICCAI_BraTS_2018_Data_Training', '../datasets/MICCAI_BraTS_2019_Data_Training']
+#BASEDIR = ["../datasets/BraTS2020/", '../datasets/MICCAI_BraTS_2018_Data_Training', '../datasets/MICCAI_BraTS_2019_Data_Training']
 #BASEDIR = ["../datasets/BraTS2020/"]
-TRAIN_DATASET = 'training'
-VAL_DATASET = 'training'   # val or val17 
+TRAIN_DATASET = '../fold4_train.txt'
+VAL_DATASET = '../fold0_val.txt'   # val or val17 
 TEST_DATASET = '.'
 
 
-BASEDIR = "../datasets/BraTS2020_Validation/"
-TRAIN_DATASET = ['val']
-VAL_DATASET = 'training'   # val or val17 
-TEST_DATASET = 'val'
-save_pred = "../save_pred/BraTS2020_val/"
+# BASEDIR = "../datasets/BraTS2020_Validation/"
+# TRAIN_DATASET = ['val']
+# VAL_DATASET = 'training'   # val or val17 
+# TEST_DATASET = 'val'
+# save_pred = "../save_pred/BraTS2020_val/"
 
-NUM_CLASS = 4
+NUM_CLASS = 2
 # GT_TEST = False

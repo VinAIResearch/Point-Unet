@@ -19,7 +19,7 @@ from tensorpack.utils.gpu import get_nr_gpu
 import config
 from model import ( unet3d, unet3d_attention, Loss )
 from data_sampler import (get_train_dataflow, get_eval_dataflow, get_test_dataflow)
-from eval import (eval_brats, pred_brats, segment_one_image, segment_one_image_dynamic)
+from eval import (eval_brats, eval_pancreas, pred_brats, segment_one_image, segment_one_image_dynamic)
 
 # import tensorflow as tf
 # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.7)
@@ -69,13 +69,15 @@ class Unet3dModel(ModelDesc):
                     tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 4), 'label')]
             else:
                 ret = [
-                    tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 4), 'image'),
+                    # tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 4), 'image'),
+                    tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 1), 'image'),
                     tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 1), 'weight'),
                     tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 1), 'label')]
         else:
             S = self.inference_shape
             ret = [
-                tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 4), 'image')]
+                # tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 4), 'image')]
+                tf.placeholder(tf.float32, (1, S[0], S[1], S[2], 1), 'image')]
         return ret
 
     def build_graph(self, *inputs):
@@ -115,6 +117,30 @@ class Unet3dModel(ModelDesc):
                 #final_probs = tf.identity(featuremap, name="final_probs")
                 final_pred = tf.argmax(final_probs, axis=-1, name="final_pred")
 
+# class EvalCallback(Callback):
+#     def _setup_graph(self):
+#         self.pred = self.trainer.get_predictor(
+#             ['image'], get_model_output_names())
+#         self.df = get_eval_dataflow()
+    
+#     def _eval(self):
+#         scores = eval_brats(self.df, lambda img: segment_one_image(img, [self.pred], is_online=True))
+#         for k, v in scores.items():
+#             self.trainer.monitors.put_scalar(k, v)
+
+#     def _trigger_epoch(self):
+#         if self.epoch_num > 0 and self.epoch_num % config.EVAL_EPOCH == 0:
+#             self._eval()
+
+# def offline_evaluate(pred_func, output_file):
+#         df = get_eval_dataflow()
+#         if config.DYNAMIC_SHAPE_PRED:    
+#             eval_brats(
+#                 df, lambda img: segment_one_image_dynamic(img, pred_func))
+#         else:
+#             eval_brats(
+#                 df, lambda img: segment_one_image(img, pred_func))
+
 class EvalCallback(Callback):
     def _setup_graph(self):
         self.pred = self.trainer.get_predictor(
@@ -122,7 +148,7 @@ class EvalCallback(Callback):
         self.df = get_eval_dataflow()
     
     def _eval(self):
-        scores = eval_brats(self.df, lambda img: segment_one_image(img, [self.pred], is_online=True))
+        scores = eval_pancreas(self.df, lambda img: segment_one_image(img, [self.pred], is_online=True))
         for k, v in scores.items():
             self.trainer.monitors.put_scalar(k, v)
 
@@ -133,10 +159,10 @@ class EvalCallback(Callback):
 def offline_evaluate(pred_func, output_file):
         df = get_eval_dataflow()
         if config.DYNAMIC_SHAPE_PRED:    
-            eval_brats(
+            eval_pancreas(
                 df, lambda img: segment_one_image_dynamic(img, pred_func))
         else:
-            eval_brats(
+            eval_pancreas(
                 df, lambda img: segment_one_image(img, pred_func))
 
 def offline_pred(pred_func, output_file):
@@ -157,6 +183,9 @@ if __name__ == '__main__':
 
     if args.datadir:
         config.BASEDIR = args.datadir
+
+    if args.evaluate or args.predict:
+        config.BATCH_SIZE = 1
 
     if args.gpu:
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
@@ -243,16 +272,16 @@ if __name__ == '__main__':
             callbacks=[
                 PeriodicCallback(
                     ModelSaver(max_to_keep=10, keep_checkpoint_every_n_hours=1),
-                    every_k_epochs=10),
+                    every_k_epochs=20),
                 ScheduledHyperParamSetter('learning_rate', 
-                    [(40, config.BASE_LR*0.1),
-                    (60, config.BASE_LR*0.01),
-                    (80, config.BASE_LR*0.01),
-                    (140, config.BASE_LR*0.001),
-                    (160, config.BASE_LR*0.0001),
-                    (180, config.BASE_LR*0.00001)]
+                    [(20, config.BASE_LR*0.1),
+                    (70, config.BASE_LR*0.01),
+                    (110, config.BASE_LR*0.01),
+                    (150, config.BASE_LR*0.001),
+                    (280, config.BASE_LR*0.0001),
+                    (280, config.BASE_LR*0.00001)]
                 ),
-                #EvalCallback(),
+                EvalCallback(),
                 #GPUUtilizationTracker(),
                 #PeakMemoryTracker(),
                 EstimatedTimeLeft()

@@ -20,7 +20,7 @@ import config
 #import cv2
 #import skimage
 #import nibabel
-from utils import crop_brain_region
+from utils import crop_brain_region, load_pancreas_img
 
 class BRATS_SEG(object):
     def __init__(self, basedir, mode):
@@ -176,3 +176,57 @@ class BRATS_SEG(object):
 # _flair.nii.gz'}, 'file_name': '/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS_2018_Data_Training/training/HGG/B│                                                                                                                     
 # rats18_CBICA_AOP_1', 'id': 'Brats18_CBICA_AOP_1', 'gt': '/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS_2018_Da│                                                                                                                     
 # ta_Training/training/HGG/Brats18_CBICA_AOP_1/Brats18_CBICA_AOP_1_seg.nii.gz'}  
+
+class PANCREAS_SEG(object):
+    def __init__(self, basedir, mode):
+        """
+        basedir="/data/dataset/BRATS2018/{mode}/{HGG/LGG}/patient_id/{flair/t1/t1ce/t2/seg}"
+        mode: training/val/test
+        """
+        self.basedir = basedir
+        self.mode = mode
+
+    def load_3d(self):
+        """
+        dataset_mode: HGG/LGG/ALL
+        return list(dict[patient_id][modality] = filename.nii.gz)
+        """
+        print("Data Folder: ", self.basedir)
+        
+        with open(self.mode, 'r') as file:
+            imgs = [os.path.join(self.basedir, 'ct', line[:-1]) for line in file]
+        
+        # imgs = [x for x in imgs if 'survival_evaluation.csv' not in x]
+        
+        patient_ids = [x[-11:-7] for x in imgs]
+
+        ret = []
+        print("Preprocessing Data ...")
+        for idx, file_name in tqdm(enumerate(imgs), total=len(imgs)):
+            data = {}
+            data['image_data'] = file_name
+            data['file_name'] = file_name
+            data['id'] = patient_ids[idx]
+            data['gt'] = file_name.replace('PANCREAS_', 'label').replace('ct', 'seg')      
+
+            if not config.NO_CACHE:
+                data['preprocessed'] = load_pancreas_img(data['image_data'], data['gt'])
+                del data['image_data']
+                del data['gt']
+
+            ret.append(data)
+        
+        return ret
+
+    @staticmethod
+    def load_many(basedir,names, add_gt=True, add_mask=False):
+        """
+        Load and merges several instance files together.
+        """
+        if not isinstance(names, (list, tuple)):
+            names = [names]
+        ret = []
+        for n in names:
+            brats = PANCREAS_SEG(basedir, n)
+            ret.extend(brats.load_3d())
+        return ret

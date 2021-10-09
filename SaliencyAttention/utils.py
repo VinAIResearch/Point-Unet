@@ -59,6 +59,24 @@ def crop_brain_region(im, gt, with_gt=True):
     else:
         return volume_list, None, weight, original_shape, [bbmin, bbmax]
 
+def load_pancreas_img(im, gt, with_gt=True):
+    volume_list = []
+
+    filename = im
+    volume = load_nifty_volume_as_array(filename, with_header=False)
+
+    weight = np.ones_like(volume, np.float32)
+    if config.INTENSITY_NORM == 'modality':
+        volume = itensity_rescaling_one_volume(volume)
+    volume_list.append(volume)
+
+    if with_gt:
+        label = load_nifty_volume_as_array(gt, False)
+
+        return volume_list, label, weight
+    else:
+        return volume_list, None, weight
+
 def transpose_volumes(volumes, slice_direction):
     """
     transpose a list of volumes
@@ -330,6 +348,17 @@ def itensity_normalize_one_volume(volume):
     out[volume == 0] = out_random[volume == 0]
     return out
 
+def itensity_rescaling_one_volume(volume):
+    """
+    Rescaling the itensity of an nd volume based on max and min value
+    inputs:
+        volume: the input nd volume
+    outputs:
+        out: the normalized nd volume
+    """
+    out = (volume + 100) / 340
+    return out
+
 def crop_ND_volume_with_bounding_box(volume, min_idx, max_idx):
     """
     crop/extract a subregion form an nd image.
@@ -404,7 +433,8 @@ def extract_roi_from_volume(volume, in_center, output_shape, fill = 'random'):
     """
     input_shape = volume.shape   
     if(fill == 'random'):
-        output = np.random.normal(0, 1, size = output_shape)
+        #output = np.random.normal(0, 1, size = output_shape)
+        output = np.random.random_sample(size = output_shape)
     else:
         output = np.zeros(output_shape)
     r0max = [int(x/2) for x in output_shape]
