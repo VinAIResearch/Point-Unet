@@ -80,8 +80,8 @@ def genSegmentation(pairInOut):
 
 if __name__ == '__main__':
 
-    pathProb = "/vinai/vuonghn/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/predict_npy/"
-    path3DVolume = "/vinai/vuonghn/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/predict_nii"
+    pathProb = "/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/predict_npy/"
+    path3DVolume = "/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/predict_nii"
     if not os.path.exists(path3DVolume):
         os.makedirs(path3DVolume)
     parallel = False

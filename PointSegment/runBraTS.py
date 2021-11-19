@@ -224,7 +224,7 @@ if __name__ == '__main__':
             chosen_snap = FLAGS.model_path
         else:
             chosen_snapshot = -1
-        chosen_snap = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS20_0.01_float/Point-Unet/output/BraTS20_CE/snapshots/snap-8261"
+        chosen_snap = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS20_0.01_float/Point-Unet/output/BraTS20_CE/snapshots/snap-8261"
         tester = ModelTester(model, dataset, path_save, restore_snap=chosen_snap)
         tester.test(model, dataset)
     else:

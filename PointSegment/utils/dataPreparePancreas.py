@@ -24,11 +24,11 @@ import random
 
 sub_grid_size = 0.01
 
-dataset_path = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1"
+dataset_path = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1"
 data_nii = os.path.join(dataset_path,"ct")
 label_nii = os.path.join(dataset_path,"seg")
-original_pc_folder = '/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/PointCloud/original_ply/'
-sub_pc_folder =      '/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/PointCloud/input0.01/'
+original_pc_folder = '/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/PointCloud/original_ply/'
+sub_pc_folder =      '/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/PointCloud/input0.01/'
 
 
 

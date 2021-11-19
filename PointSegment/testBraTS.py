@@ -17,7 +17,7 @@ import copy
 
 
 name_labels = ['bachground','ET', 'WT' , 'TC']
-# outdir = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS20_0.01_float/Point-Unet/output/BraTS20_CE/offline20_CE/"
+# outdir = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS20_0.01_float/Point-Unet/output/BraTS20_CE/offline20_CE/"
 
 # if not os.path.exists(outdir):
 #     os.makedirs(outdir)

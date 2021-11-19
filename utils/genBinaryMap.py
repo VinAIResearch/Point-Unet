@@ -82,8 +82,8 @@ def genSegmentation(pairInOut):
 
 if __name__ == '__main__':
 
-    pathProb = "/vinai/vuonghn/Research/3D_Med_Seg/dataset/BraTS2020/predict_npy/"
-    path3DVolume = "/vinai/vuonghn/Research/3D_Med_Seg/dataset/BraTS2020/predict_nii"
+    pathProb = "/home/ubuntu/Research/3D_Med_Seg/dataset/BraTS2020/predict_npy/"
+    path3DVolume = "/home/ubuntu/Research/3D_Med_Seg/dataset/BraTS2020/predict_nii"
     thresholdBinary = 0.6
 
     if not os.path.exists(path3DVolume):

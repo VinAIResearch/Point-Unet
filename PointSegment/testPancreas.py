@@ -17,7 +17,7 @@ import copy
 
 # print("path_save", path_save)
 # exit()
-# outdir = "/vinai/vuonghn/Research/Brain_Point/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS18_0.01_float/Point-Unet/debug/"
+# outdir = "/home/ubuntu/Research/Brain_Point/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS18_0.01_float/Point-Unet/debug/"
 
 
 def preprocess_label(label):

@@ -5,7 +5,7 @@
 
 # <a name="introduction"></a> Point-Unet: A Context-Aware Point-Based Neural Network for Volumetric Segmentation
 
-This repository contains the implementation of the MICCAI 2021 paper Point-Unet: A Context-Aware Point-Based Neural Network for Volumetric Segmentation. Point-Unet is a point-based volumetric segmentation frame- work with three main modules: the saliency attention, the context-aware sam- pling, and the point-based segmentation module. The saliency attention module takes a volume as input and predicts an attentional probability map that guides the context-aware point sampling in the subsequent module to transform the volume into a point cloud. The point-based segmentation module then processes the point cloud and outputs the segmentation, which is finally fused back to the volume to obtain the final segmentation results. 
+This repository contains the implementation of the MICCAI 2021 paper Point-Unet: A Context-Aware Point-Based Neural Network for Volumetric Segmentation. Point-Unet is a point-based volumetric segmentation framework with three main modules: the saliency attention, the context-aware sampling, and the point-based segmentation module. The saliency attention module takes a volume as input and predicts an attentional probability map that guides the context-aware point sampling in the subsequent module to transform the volume into a point cloud. The point-based segmentation module then processes the point cloud and outputs the segmentation, which is finally fused back to the volume to obtain the final segmentation results. 
 
 ![DETR](figure/flowchart.jpg)
 
@@ -29,7 +29,10 @@ The code is based on Tensorflow. It has been tested with Python 3.6.9, PyTorch 1
 Install required python packages
 
 ```bash
-$ pip install -r requirements.txt
+$ conda env create -f environment.yml
+$ sh PointSegment/compile_op.sh
+
+
 ```
 
 ### Data preparation

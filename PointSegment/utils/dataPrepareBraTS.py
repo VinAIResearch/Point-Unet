@@ -23,10 +23,10 @@ typeimg = ['t1ce','t1', 'flair', 't2', 'seg']
 sub_grid_size = 0.01
 
 
-dataset_path = "/vinai/vuonghn/Research/3D_Med_Seg/Volume_3D/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
-attention_mask_path =  "/vinai/vuonghn/Research/3D_Med_Seg/Volume_3D/BraTS_data/submission/tannh10/TanND_probs_nii/BraTS2018_val/val18_probs95/BraTS2018_val/"
-original_pc_folder = '/vinai/vuonghn/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/original_ply'
-sub_pc_folder =      '/vinai/vuonghn/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/input0.01'
+dataset_path = "/home/ubuntu/Research/3D_Med_Seg/Volume_3D/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
+attention_mask_path =  "/home/ubuntu/Research/3D_Med_Seg/Volume_3D/BraTS_data/submission/tannh10/TanND_probs_nii/BraTS2018_val/val18_probs95/BraTS2018_val/"
+original_pc_folder = '/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/original_ply'
+sub_pc_folder =      '/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/input0.01'
 if not exists(original_pc_folder):
     os.makedirs(original_pc_folder) 
 if not exists(sub_pc_folder):

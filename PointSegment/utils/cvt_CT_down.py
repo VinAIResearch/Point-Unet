@@ -15,10 +15,10 @@ import SimpleITK as sitk
 import scipy.ndimage as ndimage
 
 #Path to store processed data
-training_set_path = '/vinai/vuonghn/Research/dataset/Pancreas-CT_processed_down_scale0.5_expand20'
+training_set_path = '/home/ubuntu/Research/dataset/Pancreas-CT_processed_down_scale0.5_expand20'
 #Path of original data
-train_ct_path = '/vinai/vuonghn/NIH-Pancreas-CT/data/'
-train_seg_path = '/vinai/vuonghn/NIH-Pancreas-CT/TCIA_pancreas_labels-02-05-2017'
+train_ct_path = '/home/ubuntu/NIH-Pancreas-CT/data/'
+train_seg_path = '/home/ubuntu/NIH-Pancreas-CT/TCIA_pancreas_labels-02-05-2017'
 
 #Maximum value
 upper = 240

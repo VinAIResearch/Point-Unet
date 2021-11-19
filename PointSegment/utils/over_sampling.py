@@ -11,8 +11,8 @@ from tqdm import tqdm
 import SimpleITK as sitk
 import scipy.ndimage as ndimage
 
-path_all_truth = "/vinai/vuonghn/Research/dataset/Pancreas-CT_processed_v1/seg/"
-path_all_pred = "/vinai/vuonghn/Research/Brain_Point/RandLA-Net/Model_log/normalize_xyz/Pancreas/nii_Tannd/all_nii_fullsize/"
+path_all_truth = "/home/ubuntu/Research/dataset/Pancreas-CT_processed_v1/seg/"
+path_all_pred = "/home/ubuntu/Research/Brain_Point/RandLA-Net/Model_log/normalize_xyz/Pancreas/nii_Tannd/all_nii_fullsize/"
 def over_binary(label0):
     new_label_level = label0.copy()
     N = np.count_nonzero(label0 ==1)
@@ -109,10 +109,10 @@ for ID in list_ID:
 
 
 
-# new_seg_dir = "/vinai/vuonghn/Research/dataset"
+# new_seg_dir = "/home/ubuntu/Research/dataset"
 
-# ct = sitk.ReadImage("/vinai/vuonghn/Research/dataset/Pancreas-CT_processed_v1/ct/PANCREAS_0036.nii.gz", sitk.sitkInt16)
-# label = sitk.ReadImage("/vinai/vuonghn/Research/dataset/Pancreas-CT_processed_v1/seg/label0036.nii.gz", sitk.sitkInt16)
+# ct = sitk.ReadImage("/home/ubuntu/Research/dataset/Pancreas-CT_processed_v1/ct/PANCREAS_0036.nii.gz", sitk.sitkInt16)
+# label = sitk.ReadImage("/home/ubuntu/Research/dataset/Pancreas-CT_processed_v1/seg/label0036.nii.gz", sitk.sitkInt16)
 
 # new_seg = sitk.GetImageFromArray(label)
 

@@ -26,7 +26,7 @@ number_of_point = 262144
 INTENSITY_NORM = 'modality'
 PATCH_SIZE = (144,144,144)
 DIRECTION = 'axial'
-path_origin ='/vinai/vuonghn/Research/BraTS/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/'
+path_origin ='/home/ubuntu/Research/BraTS/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/'
 output_savepoint = "/home/ubuntu/Point_Cloud/block64_xyz_local/val_set_x_z_y_local/"
 def flip_lr(data):
     data = copy.deepcopy(data)
@@ -601,7 +601,7 @@ def sample_volume_pointcloud(ID):
 
     # for i in range(weight.shape[0]):
     #     # weight_id = weight[i]
-    #     plt.imsave("/vinai/vuonghn/Brain_Point/RandLA-Net/utils/img_2D/mask_0"+str(i)+".png", weight[i])
+    #     plt.imsave("/home/ubuntu/Brain_Point/RandLA-Net/utils/img_2D/mask_0"+str(i)+".png", weight[i])
 
     # print("label ",np.unique(label))
     # exit()
@@ -666,9 +666,9 @@ def sample_volume_pointcloud(ID):
 # list_ID = os.listdir(path_origin)
 # train_IDs, val_IDs = train_test_split(list_ID,train_size=0.8,test_size=0.2, random_state=182)
 
-# save_IDs_point_cloud = "/vinai/vuonghn/Research/BraTS/3D_Medical_Segmentation/utils/data_splited/train_IDs_point_cloud.txt"
+# save_IDs_point_cloud = "/home/ubuntu/Research/BraTS/3D_Medical_Segmentation/utils/data_splited/train_IDs_point_cloud.txt"
 
-path_train_ID = "/vinai/vuonghn/Research/BraTS/3D_Medical_Segmentation/utils/data_splited/val_IDs_fold1_82_182.txt"
+path_train_ID = "/home/ubuntu/Research/BraTS/3D_Medical_Segmentation/utils/data_splited/val_IDs_fold1_82_182.txt"
 with open(path_train_ID) as f:
     content = f.readlines()
 train_IDs = [x.strip() for x in content] 

@@ -68,7 +68,7 @@ class ConfigPancreas:
     learning_rate = 1e-3  # initial learning rate # 1e - 4
     lr_decays = {i: 0.95 for i in range(0, 500)}  # decay rate of learning rate
     saving = True  
-    saving_path = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3"
+    saving_path = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3"
     if not os.path.exists(saving_path):
         os.mkdir(saving_path)
     train_sum_dir = saving_path+'/train_log/'

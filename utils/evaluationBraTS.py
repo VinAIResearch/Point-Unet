@@ -65,9 +65,9 @@ def calculate_dice(path_truth, path_pred, path_report):
 
 
 
-path_truths ="/vinai/vuonghn/Research/3D_Med_Seg/Volume_3D/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG"
-path_seg = '/vinai/vuonghn/Research/3D_Med_Seg/Volume_3D/BraTS_data/submission/submission4/RandLANet_74case_input64k_train295'
-path_report = os.path.join("/vinai/vuonghn/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020","Offline"+".csv" ) 
+path_truths ="/home/ubuntu/Research/3D_Med_Seg/Volume_3D/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG"
+path_seg = '/home/ubuntu/Research/3D_Med_Seg/Volume_3D/BraTS_data/submission/submission4/RandLANet_74case_input64k_train295'
+path_report = os.path.join("/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020","Offline"+".csv" ) 
 
 calculate_dice(path_truths,path_seg, path_report)
 exit()

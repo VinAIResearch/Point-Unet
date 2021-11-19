@@ -7,9 +7,9 @@ import csv
 from shutil import copyfile
 
 
-LABEL_PATH = '/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/seg'
+LABEL_PATH = '/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/seg'
 PREDICTION_PATH = '/home/ubuntu/vuonghn/predictPancreas'
-path_save_csv = "/vinai/vuonghn/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/diceloss.csv"
+path_save_csv = "/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/diceloss.csv"
 
 def preprocess_label(label):
     bachground = label == 0

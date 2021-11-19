@@ -79,7 +79,7 @@ def genSegmentation(pairInOut):
 
 if __name__ == '__main__':
 
-    pathProb = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/Pred_dice/prob_pred_point"
+    pathProb = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/Pred_dice/prob_pred_point"
     path3DVolume = "/home/ubuntu/vuonghn/predictPancreas"
     if not os.path.exists(path3DVolume):
         os.makedirs(path3DVolume)

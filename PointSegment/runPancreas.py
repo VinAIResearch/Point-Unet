@@ -13,8 +13,8 @@ import nibabel as nib
 
 
 
-path_pancreas = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/"
-original_volume = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct"
+path_pancreas = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/"
+original_volume = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct"
 
 class Pancreas:
     def __init__(self, Mode):
@@ -222,8 +222,8 @@ if __name__ == '__main__':
         model = Network(dataset, cfg)
 
     
-        chosen_snap = "/vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497"
-        root_save = "/vinai/vuonghn/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/"
+        chosen_snap = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497"
+        root_save = "/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/"
         if not os.path.exists(root_save):
             os.mkdir(root_save)
         print("root_save 0",root_save)
