@@ -24,7 +24,7 @@ Details of the Point-Unet model architecture and experimental results can be fou
 ## Usage
 ### Installation
 
-The code is based on Tensorflow. It has been tested with Python 3.6.9, PyTorch 1.2.0, CUDA 9.0 on Ubuntu 18.04 (NVIDIA V100).
+The code is based on Tensorflow. It has been tested with Python 3.6.9, CUDA 9.0 on Ubuntu 18.04 (NVIDIA V100).
 
 Install required python packages
 
