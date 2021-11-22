@@ -9,7 +9,7 @@ This repository contains the implementation of the MICCAI 2021 paper Point-Unet:
 
 ![DETR](figure/flowchart.jpg)
 
-Details of the Point-Unet model architecture and experimental results can be found in our [following paper](https://rdcu.be/cyhME). Please cite our paper when Point-Unet is used to help your research. 
+Details of the Point-Unet model architecture and experimental results can be found in our [following paper](https://rdcu.be/cyhME).  
 
 ```
 @inproceedings{ho2021point,
@@ -21,6 +21,7 @@ Details of the Point-Unet model architecture and experimental results can be fou
   organization={Springer}
 }
 ```
+Please cite our paper when Point-Unet is used to help your research.
 ## Usage
 ### Installation
 
@@ -31,13 +32,11 @@ Install required python packages
 ```bash
 $ conda env create -f environment.yml
 $ sh PointSegment/compile_op.sh
-
-
 ```
 
 ### Data preparation
 
-Download and organize [BraTS18](https://www.med.upenn.edu/sbia/brats2018/data.html), [BraTS19](https://www.med.upenn.edu/cbica/brats2019/data.html), [BraTS20](https://www.med.upenn.edu/cbica/brats2020/data.html) and [Pancreas](https://wiki.cancerimagingarchive.net/display/Public/Pancreas-CT) dataset from its official website. The dataset will be stored at structure below with ```nii.gz``` format
+Download and organize [BraTS18](https://www.med.upenn.edu/sbia/brats2018/data.html), [BraTS19](https://www.med.upenn.edu/cbica/brats2019/data.html), [BraTS20](https://www.med.upenn.edu/cbica/brats2020/data.html) and [Pancreas](https://wiki.cancerimagingarchive.net/display/Public/Pancreas-CT) datasets from its official website. The dataset will be stored at the structure below with ```nii.gz``` format
 
 ```
 dataset/BraTS2018/
@@ -140,7 +139,7 @@ dataset/Pancreas/
     $ python3 -B  utils/genSegmentationBraTS.py
     ```
 
-## <a name="result"></a> Result
+## <a name="results"></a> Results
 
 * Offline validation set
     | Dataset | Dice ET | Dice ET | Dice ET | Average Dice | Average HD95 |
@@ -159,29 +158,3 @@ dataset/Pancreas/
 ## <a name="notes"></a> Acknowledgement
 This repository is borrow a lot of codes from [brats17](https://github.com/taigw/brats17/) and [RandLA-Net](https://github.com/QingyongHu/RandLA-Net).
 
-
-
-
-## License
-    
-    MIT License
-
-    Copyright (c) 2021 VinAI Research
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
