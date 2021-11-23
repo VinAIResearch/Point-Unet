@@ -21,7 +21,8 @@ Details of the Point-Unet model architecture and experimental results can be fou
   organization={Springer}
 }
 ```
-Please cite our paper when Point-Unet is used to help your research.
+**Please CITE** our paper when Point-Unet is used to help produce published results or incorporated into other software
+
 ## Usage
 ### Installation
 
@@ -83,12 +84,12 @@ dataset/Pancreas/
    
 * PointSegment
 
-    Training model: 
+    Training model (Fix arguments ```path_data```, ```saving_path``` in ```helper_tool.py``` for set path data training and path save checkpoints): 
     ```bash
     $ python3 -B  PointSegment/runPancreas.py --gpu 0 --mode train
     ```
 
-    Evaluation model: 
+    Evaluation model (Fix arguments ```path_save```, ```chosen_snap``` in ```runPancreas.py``` for set path save results and path load checkpoint): 
     ```bash
     $ python3 -B  PointSegment/runPancreas.py --gpu 0 --mode test 
     ```
@@ -124,12 +125,12 @@ dataset/Pancreas/
     Generated results as format *.ply, *pkl, *.npy.
 * PointSegment
 
-    Training model
+    Training model (Fix arguments ```path_data```, ```saving_path``` in ```helper_tool.py``` for set path data training and path save checkpoints):
     ```bash
     $ python3 -B  PointSegment/runBraTS.py --gpu 0 --mode train
     ```
 
-    Evaluation model
+    Evaluation model (Fix arguments ```path_save```, ```chosen_snap``` in ```runPancreas.py``` for set path save results and path load checkpoint):
     ```bash
     $ python3 -B  PointSegment/runBraTS.py--gpu 0 --mode test 
     ```
