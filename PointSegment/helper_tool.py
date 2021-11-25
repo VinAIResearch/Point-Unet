@@ -4,6 +4,8 @@ import numpy as np
 import colorsys, random, os, sys
 import pandas as pd
 from tqdm import tqdm
+
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,7 +21,6 @@ import nearest_neighbors.lib.python.nearest_neighbors as nearest_neighbors
 class ConfigBraTS:
     k_n = 16  # KNN
     num_layers = 5  # Number of layers
-    # num_points = 450000
     num_points = 365000
 
     num_classes = 4 # Number of valid classes
@@ -47,7 +48,6 @@ class ConfigBraTS:
 class ConfigPancreas:
     k_n = 16  # KNN
     num_layers = 5  # Number of layers
-    # num_points = 30000
     num_points = 180000
 
     num_classes = 2 # Number of valid classes
@@ -56,24 +56,20 @@ class ConfigPancreas:
     batch_size = 1 # batch_size during training
     val_batch_size = 1  # batch_size during validation and test
 
-
-    train_steps = 2  # Number of steps per epochs
-    val_steps = 1  # Number of validation steps per epoch
-
     sub_sampling_ratio = [ 4, 4, 4, 4, 2]  # sampling ratio of random sampling at each layer
     d_out = [16, 64, 128, 256, 512,1024,2048]  # feature dimension
 
     noise_init = 3.5  # noise initial parameter
-    max_epoch = 5000  # maximum epoch during training
+    # max_epoch = 5000  # maximum epoch during training
     learning_rate = 1e-3  # initial learning rate # 1e - 4
     lr_decays = {i: 0.95 for i in range(0, 500)}  # decay rate of learning rate
+    
+    max_epoch = None
     saving = True  
-    saving_path = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3"
-    if not os.path.exists(saving_path):
-        os.mkdir(saving_path)
-    train_sum_dir = saving_path+'/train_log/'
-    log_file = saving_path + "/train_summary.txt"
-
+    saving_path = None
+    train_sum_dir = None
+    log_file = None
+    
 
 
 

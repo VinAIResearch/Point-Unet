@@ -15,10 +15,6 @@ from scipy import ndimage
 import copy
 
 
-# print("path_save", path_save)
-# exit()
-# outdir = "/home/ubuntu/Research/Brain_Point/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS18_0.01_float/Point-Unet/debug/"
-
 
 def preprocess_label(label):
     bachground = label == 0
@@ -137,11 +133,11 @@ class ModelTester:
 
         self.prob_logits = tf.nn.softmax(model.logits)
 
-
+        print("dataset.input_names['validation'] ", len(dataset.input_names['validation']))
 
         # Initiate global prediction over all test clouds
-        self.test_probs = [np.zeros(shape=[l.shape[0], model.config.num_classes], dtype=np.float32)
-                           for l in dataset.input_labels['validation']]
+        # self.test_probs = [np.zeros(shape=[l.shape[0], model.config.num_classes], dtype=np.float32)
+        #                    for l in dataset.input_names['validation']]
     def test(self, model, dataset, num_votes=100):
         num_votes =1
         # Smoothing parameter for votes

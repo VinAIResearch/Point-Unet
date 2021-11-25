@@ -65,7 +65,6 @@ class BraTS:
     def load_sub_sampled_clouds(self, sub_grid_size):
         tree_path = join(self.path,'input0.01')
         for i, IDs in enumerate(self.all_files):
-            # file_path = join(self.path,'original_ply',IDs)
             file_path = IDs
             cloud_name = file_path.split('/')[-1][:-4]
 

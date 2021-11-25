@@ -1,7 +1,7 @@
 from os.path import join
+from helper_ply import read_ply
 from RandLANet import Network
 from testPancreas import ModelTester
-from helper_ply import read_ply
 from helper_tool import ConfigPancreas as cfg
 from helper_tool import DataProcessing as DP
 from helper_tool import Plot
@@ -13,13 +13,13 @@ import nibabel as nib
 
 
 
-path_pancreas = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/"
-original_volume = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct"
-
 class Pancreas:
-    def __init__(self, Mode):
+    def __init__(self, Mode, Fold, data_PC_path, data_3D_path):
         self.name = 'Pancreas'
-        self.path = path_pancreas
+        self.path_PC = data_PC_path
+        self.path_3D = data_3D_path
+        self.val_labels = []
+
         self.label_to_names = {0: '0',
                                1: '1'}
         self.num_classes = len(self.label_to_names)
@@ -27,34 +27,20 @@ class Pancreas:
         self.label_to_idx = {l: i for i, l in enumerate(self.label_values)}
         self.ignored_labels = np.array([])
         self.Mode = Mode
-        self.val_proj = []
-        self.val_labels = []
-        self.possibility = {}
-        self.min_possibility = {}
-
-        self.ply_data = {'training': [], 'validation': []}
-        self.input_trees = {'training': [], 'validation': []}
-        self.input_colors = {'training': [], 'validation': []}
         self.input_labels = {'training': [], 'validation': []}
         self.input_names = {'training': [], 'validation': []}
         self.path_ply = {'training': [], 'validation': []}
         self.path_xyz = {'training': [], 'validation': []}
         self.xyz_shape = {'training': [], 'validation': []}
         self.input_xyz_origin = {'training': [], 'validation': []}
-        self.weight = {'training': [], 'validation': []}
-        self.distribute = np.array([0.0,0.0,0.0,0.0])
-        self.max_tumor = 0
-        self.fold = 3
+        self.fold = Fold
         self.all_files = self.get_all_file()
- 
         self.load_sub_sampled_clouds(cfg.sub_grid_size)
-
-
 
     def get_all_file(self):
 
         if self.Mode == "train":
-            all_files = glob.glob(join(path_pancreas, 'original_ply', '*.ply'))
+            all_files = glob.glob(join(self.path_PC , 'original_ply', '*.ply'))
         else:
             all_files = []
             for i in range(self.fold, 83,4):
@@ -62,17 +48,14 @@ class Pancreas:
                     continue
                 for j in range(8):
                     ID = str(i).zfill(4)+"_loop_"+str(j)+".ply"
-                    file_ID = os.path.join(path_pancreas,"original_ply",ID)
+                    file_ID = os.path.join(self.path_PC ,"original_ply",ID)
                     all_files.append(file_ID)
         return all_files
 
 
 
     def load_sub_sampled_clouds(self, sub_grid_size):
-        tree_path = join(self.path,'input0.01')
-
-        max_mask = 0
-        
+        tree_path = join(self.path_PC,'input0.01')        
         for i, file_path in enumerate(self.all_files):
             
             t0 = time.time()
@@ -91,7 +74,7 @@ class Pancreas:
                 
 
             else:
-                path_volume3D = os.path.join(original_volume,"PANCREAS_"+cloud_name+".nii.gz")
+                path_volume3D = os.path.join(self.path_3D,"PANCREAS_"+cloud_name+".nii.gz")
                 volume_shape = np.asanyarray(nib.load(path_volume3D).dataobj).shape
                 volume_shape = (volume_shape[2],volume_shape[0],volume_shape[1],2)  
                 self.path_ply["validation"] += [file_path]
@@ -117,12 +100,7 @@ class Pancreas:
                 cloud_idx = i
                 file_path = self.path_ply[split][i]
                 full_ply_file = join(file_path)
-
-                # start_time = time.time()
-
-                # data = self.ply_data[split][i]
                 data = read_ply(full_ply_file)
-
                 queried_pc_xyz =  np.vstack((data['x'], data['y'], data['z'])).T
                 sub_colors = np.vstack((data['value']))
                 sub_labels = data['class']
@@ -197,21 +175,37 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=int, default=0, help='the number of GPUs to use [default: 0]')
-    parser.add_argument('--test_area', type=int, default=5, help='Which area to use for test, option: 1-6 [default: 5]')
     parser.add_argument('--mode', type=str, default='train', help='options: train, test, vis')
-    parser.add_argument('--model_path', type=str, default='None', help='pretrained model path')
+    parser.add_argument('--logdir', type=str, default='None', help='path to the log directory')
+    parser.add_argument('--fold', type=int, default='None', help='fold to cross-validation')
+    parser.add_argument('--n_epoch', type=int, default=100, help='number of epoch')
+    parser.add_argument('--data_PC_path', type=str, default='None', help='number of epoch')
+    parser.add_argument('--data_3D_path', type=str, default='None', help='number of epoch')
+    parser.add_argument('--checkpoint_path', type=str, default='None', help='number of epoch')
+    parser.add_argument('--results_path', type=str, default='None', help='number of epoch')
+
+
+
     FLAGS = parser.parse_args()
+    cfg.saving_path = FLAGS.logdir
+    if not os.path.exists(cfg.saving_path):
+        os.mkdir(cfg.saving_path)
+    cfg.train_sum_dir = cfg.saving_path+'/train_log/'
+    cfg.log_file = cfg.saving_path + "/train_summary.txt"      
+    cfg.max_epoch = FLAGS.n_epoch
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ['CUDA_VISIBLE_DEVICES'] = str(FLAGS.gpu)
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
 
     Mode = FLAGS.mode
+    Fold = FLAGS.fold
+    data_PC_path = FLAGS.data_PC_path
+    data_3D_path = FLAGS.data_3D_path
+    chosen_snap = FLAGS.checkpoint_path
+    output_save = FLAGS.results_path
 
-    test_area = FLAGS.test_area
-    dataset = Pancreas(Mode)
+    dataset = Pancreas(Mode,Fold,data_PC_path,data_3D_path)
     dataset.init_input_pipeline()
 
     if Mode == 'train':
@@ -220,28 +214,38 @@ if __name__ == '__main__':
     elif Mode == 'test':
         cfg.saving = False
         model = Network(dataset, cfg)
-
-    
-        chosen_snap = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497"
-        root_save = "/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/"
-        if not os.path.exists(root_save):
-            os.mkdir(root_save)
-        print("root_save 0",root_save)
-        tester = ModelTester(model, dataset,root_save, restore_snap=chosen_snap)
+        if not os.path.exists(output_save):
+            os.mkdir(output_save)
+        tester = ModelTester(model, dataset,output_save, restore_snap=chosen_snap)
         tester.test(model, dataset)
-    else:
-        ##################
-        # Visualize data #
-        ##################
+# python3     runPancreas.py 
+#             --gpu 0 
+#             --mode train  
+#             --logdir /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3 
+#             --fold 3 
+#             --n_epoch 10 
+#             --data_PC_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/                                                   
 
-        with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
-            sess.run(dataset.train_init_op)
-            while True:
-                flat_inputs = sess.run(dataset.flat_inputs)
-                pc_xyz = flat_inputs[0]
-                sub_pc_xyz = flat_inputs[1]
-                labels = flat_inputs[21]
-                Plot.draw_pc_sem_ins(pc_xyz[0, :, :], labels[0, :])
-                Plot.draw_pc_sem_ins(sub_pc_xyz[0, :, :], labels[0, 0:np.shape(sub_pc_xyz)[1]])
-    
+
+# python3 runPancreas.py 
+#         --gpu 0 
+#         --mode test  
+#         --logdir /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3 
+#         --fold 3 
+#         --n_epoch 10 
+#         --data_PC_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/ 
+#         --data_3D_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct/ 
+#         --checkpoint_path /home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497
+#         --results_path /home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/
+
+
+# python3 runPancreas.py 
+#         --gpu 0 
+#         --mode test  
+#         --fold 3 
+#         --data_PC_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/ 
+#         --data_3D_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct/ 
+#         --checkpoint_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497
+#         --results_path /home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/
+
+# python3  runPancreas.py --gpu 0 --mode test  --logdir /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3 --fold 3 --n_epoch 10 --data_PC_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/ --data_3D_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct/ --checkpoint_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497 --results_path /vinai/vuonghn/Research/3D_Med_Seg/temp/Pancreas
