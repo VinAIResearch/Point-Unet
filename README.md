@@ -37,7 +37,7 @@ $ sh PointSegment/compile_op.sh
 
 ### Data preparation
 
-Download and organize [BraTS18](https://www.med.upenn.edu/sbia/brats2018/data.html), [BraTS19](https://www.med.upenn.edu/cbica/brats2019/data.html), [BraTS20](https://www.med.upenn.edu/cbica/brats2020/data.html) and [Pancreas](https://wiki.cancerimagingarchive.net/display/Public/Pancreas-CT) datasets from its official website. The dataset will be stored at the structure below with ```nii.gz``` format
+Download and organize [BraTS18](https://www.med.upenn.edu/sbia/brats2018/data.html), [BraTS19](https://www.med.upenn.edu/cbica/brats2019/data.html), [BraTS20](https://www.med.upenn.edu/cbica/brats2020/data.html) and [Pancreas](https://wiki.cancerimagingarchive.net/display/Public/Pancreas-CT) datasets from their official website. The dataset will be stored at the structure below with ```nii.gz``` format
 
 ```
 dataset/BraTS2018/
