@@ -65,15 +65,15 @@ dataset/Pancreas/
 
     Train attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py 
-              --logdir=./train_log/unet3d 
+    $ python3 SaliencyAttention/train.py \
+              --logdir=./train_log/unet3d \
               --gpu 0
     ```
     Predict attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py 
-              --load={path_model} 
-              --gpu 0 
+    $ python3 SaliencyAttention/train.py \
+              --load={path_model} \
+              --gpu 0 \
               --predict
     ```
 * Context-Aware Sampling
@@ -113,7 +113,9 @@ dataset/Pancreas/
     ```
     Generate Segmentation Result (Generate segmentation results as format *.nii.gz):
     ```bash
-    $ python3 -B  utils/genSegmentationPancreas.py
+    $ python3 utils/genSegmentationPancreas.py \
+              --inPros_path /dataset/Pancreas/predict_npy/ \
+              --outSegment_path /dataset/Pancreas/predict_nii \
     ```
     
 
@@ -171,8 +173,8 @@ dataset/Pancreas/
     Generate Segmentation Result (Generate segmentation results as format *.nii.gz):
     ```bash
     $ python3 utils/genSegmentationBraTS.py \
-              --inPro_path /dataset/BraTS2020/predict_npy/ \
-              --outSeg_path /dataset/BraTS2020/predict_nii \
+              --inPros_path /dataset/BraTS2020/predict_npy/ \
+              --outSegment_path /dataset/BraTS2020/predict_nii \
     ```
 
 ## <a name="results"></a> Results

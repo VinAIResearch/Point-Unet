@@ -79,8 +79,16 @@ def genSegmentation(pairInOut):
 
 if __name__ == '__main__':
 
-    pathProb = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/Pred_dice/prob_pred_point"
-    path3DVolume = "/home/ubuntu/vuonghn/predictPancreas"
+
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--inPros_path', type=str, default=0, help='the number of GPUs to use [default: 0]')
+    parser.add_argument('--outSegment_path', type=str, default='train', help='options: train, test, vis')
+    FLAGS = parser.parse_args()
+
+    pathProb = FLAGS.inPros_path
+    path3DVolume = FLAGS.outSegment_path
+
     if not os.path.exists(path3DVolume):
         os.makedirs(path3DVolume)
     parallel = False
