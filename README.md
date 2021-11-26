@@ -170,7 +170,9 @@ dataset/Pancreas/
 
     Generate Segmentation Result (Generate segmentation results as format *.nii.gz):
     ```bash
-    $ python3 -B  utils/genSegmentationBraTS.py
+    $ python3 utils/genSegmentationBraTS.py \
+              --inPro_path /dataset/BraTS2020/predict_npy/ \
+              --outSeg_path /dataset/BraTS2020/predict_nii \
     ```
 
 ## <a name="results"></a> Results

@@ -10,7 +10,7 @@ import pickle
 from scipy import ndimage
 import copy
 from tqdm import tqdm
-import time
+import time, argparse
 import cv2
 import nibabel as nib
 import SimpleITK as sitk
@@ -79,9 +79,13 @@ def genSegmentation(pairInOut):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--inPro_path', type=str, default=0, help='the number of GPUs to use [default: 0]')
+    parser.add_argument('--outSeg_path', type=str, default='train', help='options: train, test, vis')
+    FLAGS = parser.parse_args()
 
-    pathProb = "/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/predict_npy/"
-    path3DVolume = "/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/predict_nii"
+    pathProb = FLAGS.inPros_path
+    path3DVolume = FLAGS.outSegment_path
     if not os.path.exists(path3DVolume):
         os.makedirs(path3DVolume)
     parallel = False
