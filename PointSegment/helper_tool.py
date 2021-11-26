@@ -36,15 +36,19 @@ class ConfigBraTS:
     d_out = [16, 64, 128, 256, 512,1024,2048]  # feature dimension
 
     noise_init = 3.5  # noise initial parameter
-    max_epoch = 5000  # maximum epoch during training
     learning_rate = 1e-4  # initial learning rate # 1e - 4
     lr_decays = {i: 0.95 for i in range(0, 500)}  # decay rate of learning rate
-    path_data = "../dataset/BraTS2020"
-    saving = True  
-    saving_path = "./model_logs/BraTS20"
-    train_sum_dir = saving_path+'/train_log/'
-    log_file = saving_path + "/train_summary.txt"
-
+    # path_data = "../dataset/BraTS2020"
+    # saving = True  
+    # saving_path = "./Point-Unet/model_logs/BraTS20"
+    # train_sum_dir = saving_path+'/train_log/'
+    # log_file = saving_path + "/train_summary.txt"
+    max_epoch = None  # maximum epoch during training
+    saving = True
+    data_PC_path = None
+    saving_path = None
+    train_sum_dir = None
+    log_file = None
 class ConfigPancreas:
     k_n = 16  # KNN
     num_layers = 5  # Number of layers

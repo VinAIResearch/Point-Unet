@@ -122,7 +122,7 @@ class ModelTester:
     def __init__(self, model, dataset,root_save , restore_snap=None):
         my_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
         self.saver = tf.train.Saver(my_vars, max_to_keep=100)
-        self.Log_file = open('log_test_BraTS20_dense.txt', 'a')
+        # self.Log_file = open('log_test_BraTS20_dense.txt', 'a')
         self.root_save = root_save
 
         if not os.path.exists(self.root_save):
@@ -153,6 +153,7 @@ class ModelTester:
         self.test_probs = [np.zeros(shape=[l.shape[0], model.config.num_classes], dtype=np.float32)
                            for l in dataset.input_labels['validation']]
     def test(self, model, dataset, num_votes=100):
+        print("len(dataset.input_names['validation']) ", len(dataset.input_names['validation']))
         num_votes =1
 
         # Smoothing parameter for votes

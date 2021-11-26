@@ -10,9 +10,6 @@ import numpy as np
 import time, pickle, argparse, glob, os
 import random
 
-path_save = "../dataset/BraTS2020/predict_npy"
-if not os.path.exists(path_save):
-    os.makedirs(path_save)
 path_train_ID = "../dataset/BraTS2020/train_BraTS20.txt"
 with open(path_train_ID) as f:
     content = f.readlines()
@@ -24,13 +21,11 @@ with open(path_val_ID) as f:
 val_IDs = [x.strip() for x in content] 
 
 
-print("cfg.path_data ", cfg.path_data)
-
 
 class BraTS:
     def __init__(self, Mode):
         self.name = 'BraTS20'
-        self.path = cfg.path_data
+        self.path = cfg.data_PC_path
         self.label_to_names = {0: '0',
                                1: '1',
                                2: '2',
@@ -42,7 +37,6 @@ class BraTS:
         self.ignored_labels = np.array([])
         self.Mode = Mode
         self.all_files = glob.glob(join(self.path, 'original_ply', '*.ply'))
-        print("self.all_files  ", len(self.all_files))
         self.val_proj = []
         self.val_labels = []
         self.possibility = {}
@@ -67,6 +61,7 @@ class BraTS:
         for i, IDs in enumerate(self.all_files):
             file_path = IDs
             cloud_name = file_path.split('/')[-1][:-4]
+
 
             if self.Mode == "train":
                 if cloud_name in self.train_IDs:
@@ -105,7 +100,6 @@ class BraTS:
                 queried_pc_xyz =  np.vstack((data['x'], data['y'], data['z'])).T
                 sub_colors = np.vstack((data['t1ce'], data['t1'], data['flair'], data['t2'])).T
                 sub_labels = data['class']
-
 
 
                 masks = sub_labels
@@ -198,13 +192,30 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=int, default=0, help='the number of GPUs to use [default: 0]')
     parser.add_argument('--mode', type=str, default='train', help='options: train, test, vis')
-    parser.add_argument('--model_path', type=str, default='None', help='pretrained model path')
+    parser.add_argument('--n_epoch', type=int, default=100, help='number of epoch')
+    parser.add_argument('--logdir', type=str, default='./PointSegment/model_logs/BraTS20', help='path to the log directory')
+    parser.add_argument('--data_PC_path', type=str, default='./dataset/BraTS2020/PC_data', help='number of epoch')
+    # parser.add_argument('--data_3D_path', type=str, default='./dataset/BraTS2020', help='number of epoch')
+    parser.add_argument('--checkpoint_path', type=str, default='./PointSegment/model_logs/BraTS20/snapshots/snap-8261', help='number of epoch')
+    parser.add_argument('--results_path', type=str, default='../dataset/BraTS2020/predict_npy', help='number of epoch')
     FLAGS = parser.parse_args()
-
+    
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ['CUDA_VISIBLE_DEVICES'] = str(FLAGS.gpu)
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+    
+    cfg.saving_path = FLAGS.logdir
+    if not os.path.exists(cfg.saving_path):
+        os.mkdir(cfg.saving_path)
+    cfg.train_sum_dir = cfg.saving_path+'/train_log/'
+    cfg.log_file = cfg.saving_path + "/train_summary.txt" 
+    cfg.data_PC_path = FLAGS.data_PC_path
+    cfg.max_epoch = FLAGS.n_epoch
+    chosen_snap = FLAGS.checkpoint_path
+    output_save = FLAGS.results_path
+    if not os.path.exists(output_save):
+        os.makedirs(output_save)
+
 
 
     Mode = FLAGS.mode
@@ -218,13 +229,7 @@ if __name__ == '__main__':
     elif Mode == 'test':
         cfg.saving = False
         model = Network(dataset, cfg)
-
-        if FLAGS.model_path is not 'None':
-            chosen_snap = FLAGS.model_path
-        else:
-            chosen_snapshot = -1
-        chosen_snap = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS20_0.01_float/Point-Unet/output/BraTS20_CE/snapshots/snap-8261"
-        tester = ModelTester(model, dataset, path_save, restore_snap=chosen_snap)
+        tester = ModelTester(model, dataset, output_save, restore_snap=chosen_snap)
         tester.test(model, dataset)
     else:
         with tf.Session() as sess:
@@ -237,4 +242,9 @@ if __name__ == '__main__':
                 labels = flat_inputs[21]
                 Plot.draw_pc_sem_ins(pc_xyz[0, :, :], labels[0, :])
                 Plot.draw_pc_sem_ins(sub_pc_xyz[0, :, :], labels[0, 0:np.shape(sub_pc_xyz)[1]])
-    
+
+
+# Traning
+# python3 PointSegment/runBraTS.py --gpu 0 --mode train --n_epoch 100 --logdir ./PointSegment/model_logs/BraTS20 --data_PC_path ../dataset/BraTS2020
+# Predict
+# python3 PointSegment/runBraTS.py --gpu 0 --mode test --data_PC_path ../dataset/BraTS2020 --checkpoint_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/0.01_float/BraTS20_0.01_float/Point-Unet/output/BraTS20_CE/snapshots/snap-8261 --results_path ../dataset/BraTS2020/predict_npy

@@ -65,11 +65,16 @@ dataset/Pancreas/
 
     Train attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py --logdir=./train_log/unet3d --gpu 0
+    $ python3 SaliencyAttention/train.py 
+              --logdir=./train_log/unet3d 
+              --gpu 0
     ```
     Predict attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py --load={path_model} --gpu 0 --predict
+    $ python3 SaliencyAttention/train.py 
+              --load={path_model} 
+              --gpu 0 
+              --predict
     ```
 * Context-Aware Sampling
 
@@ -86,7 +91,7 @@ dataset/Pancreas/
 
     Training model: 
     ```bash
-    $ python runPancreas.py \
+    $ python PointSegment/runPancreas.py \
              --gpu 0 \
              --mode train \  
              --fold 3 \
@@ -97,7 +102,7 @@ dataset/Pancreas/
 
     Evaluation model: 
     ```bash
-    $ python3 runPancreas.py \ 
+    $ python3 PointSegment/runPancreas.py \ 
               --gpu 0 \
               --mode test \  
               --fold 3 \
@@ -119,11 +124,16 @@ dataset/Pancreas/
 
     Train Attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py --logdir=./train_log/unet3d --gpu 0
+    $ python3 SaliencyAttention/train.py 
+              --logdir=./train_log/unet3d 
+              --gpu 0
     ```
     Predict Attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py --load={path_model} --gpu 0 --predict
+    $ python3 SaliencyAttention/train.py 
+              --load={path_model} 
+              --gpu 0 
+              --predict
     ```
 * Context-Aware Sampling
 
@@ -138,14 +148,24 @@ dataset/Pancreas/
     Generated results as format *.ply, *pkl, *.npy.
 * PointSegment
 
-    Training model (Fix arguments ```path_data```, ```saving_path``` in ```helper_tool.py``` for set path data training and path save checkpoints):
+    Training model :
     ```bash
-    $ python3 -B  PointSegment/runBraTS.py --gpu 0 --mode train
+    $ python3 PointSegment/runBraTS.py \
+              --gpu 0 \
+              --mode train \ 
+              --n_epoch 100 \
+              --logdir ./PointSegment/model_logs/BraTS20 \
+              --data_PC_path ../dataset/BraTS2020
     ```
 
-    Evaluation model (Fix arguments ```path_save```, ```chosen_snap``` in ```runPancreas.py``` for set path save results and path load checkpoint):
+    Evaluation model :
     ```bash
-    $ python3 -B  PointSegment/runBraTS.py--gpu 0 --mode test 
+    $ python3 PointSegment/runBraTS.py \
+        --gpu 0 \
+        --mode test \ 
+        --data_PC_path ../dataset/BraTS2020 \ 
+        --checkpoint_path model_logs/BraTS20/snapshots/snap-8261 \
+        --results_path ../dataset/BraTS2020/predict_npy
     ```
 
     Generate Segmentation Result (Generate segmentation results as format *.nii.gz):
