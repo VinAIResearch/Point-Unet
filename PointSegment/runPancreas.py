@@ -221,31 +221,18 @@ if __name__ == '__main__':
 # python3     runPancreas.py 
 #             --gpu 0 
 #             --mode train  
-#             --logdir /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3 
 #             --fold 3 
-#             --n_epoch 10 
-#             --data_PC_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/                                                   
+#             --n_epoch 100 
+#             --data_PC_path dataset/Pancreas/PC_data
+#             --logdir model_logs/Pancreas/fold3 
 
 
-# python3 runPancreas.py 
-#         --gpu 0 
-#         --mode test  
-#         --logdir /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3 
-#         --fold 3 
-#         --n_epoch 10 
-#         --data_PC_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/ 
-#         --data_3D_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct/ 
-#         --checkpoint_path /home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497
-#         --results_path /home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/
 
-
-# python3 runPancreas.py 
-#         --gpu 0 
-#         --mode test  
-#         --fold 3 
-#         --data_PC_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/ 
-#         --data_3D_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct/ 
-#         --checkpoint_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497
-#         --results_path /home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/Pancreas/
-
-# python3  runPancreas.py --gpu 0 --mode test  --logdir /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas/mean_std/fold3 --fold 3 --n_epoch 10 --data_PC_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/ --data_3D_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/ct/ --checkpoint_path /vinai/vuonghn/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas_v1/full_size_dilation_attention/log_dice_loss/fold3/snapshots/snap-497 --results_path /vinai/vuonghn/Research/3D_Med_Seg/temp/Pancreas
+# python3     runPancreas.py 
+#             --gpu 0 
+#             --mode test  
+#             --fold 3 
+#             --data_PC_path dataset/Pancreas/PC_data 
+#             --data_3D_path dataset/Pancreas/ct
+#             --checkpoint_path model_logs/Pancreas/fold3/snap-497 
+#             --results_path dataset/Pancreas/Results

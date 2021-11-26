@@ -157,7 +157,7 @@ class ModelTester:
 
         # Test saving path
         saving_path = time.strftime('results/Log_%Y-%m-%d_%H-%M-%S', time.gmtime())
-        test_path = join('test/BraTS20', saving_path.split('/')[-1])
+        test_path = join('test/testPancreas', saving_path.split('/')[-1])
         makedirs(test_path) if not exists(test_path) else None
         makedirs(join(test_path, 'val_preds')) if not exists(join(test_path, 'val_preds')) else None
 
