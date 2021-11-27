@@ -57,8 +57,7 @@ dataset/Pancreas/
   seg/
 ```
 
-### Training code
-
+### Training and Evaluation
 #### Setup on Pancreas
 
 * Saliency Attention Map
@@ -85,7 +84,7 @@ dataset/Pancreas/
               --outBinary_path /dataset/Pancreas/binary_maps/ 
               --threshold 0.9
     ```
-    Generate Point Cloud data (Generate results as format *.ply, *pkl, *.npy):
+    Generate Point Cloud data (Output results are saved with the ```*.ply```, ```*pkl```, ```*.npy``` format):
     ```bash 
     $ python3 PointSegment/utils/dataPreparePancreas.py \
               --n_point 180000 \
@@ -117,7 +116,7 @@ dataset/Pancreas/
               --checkpoint_path model_logs/Pancreas/fold3/snap-497 \
               --results_path dataset/Pancreas/Results \
     ```
-    Generate Segmentation Result (Generate segmentation results as format *.nii.gz):
+    Generate Segmentation Results (Output results are saved with the ```*.nii.gz``` format):
     ```bash
     $ python3 utils/genSegmentationPancreas.py \
               --inPros_path /dataset/Pancreas/predict_npy/ \
@@ -153,14 +152,13 @@ dataset/Pancreas/
               --threshold 0.9
 
     ```
-    Generate Point Cloud data:
+    Generate Point Cloud data (Output results are saved with the ```*.ply```, ```*pkl```, ```*.npy``` format):    
     ```bash 
     $ python3 PointSegment/utils/dataPrepareBraTS.py \
           --n_point 365000 \
           --data_3D_path /dataset/BraTS20/ \
           --outPC_path /dataset/BraTS20/PC_data
     ```
-    Generated results as format *.ply, *pkl, *.npy.
 * PointSegment
 
     Training model :
@@ -183,7 +181,7 @@ dataset/Pancreas/
         --results_path ../dataset/BraTS2020/predict_npy
     ```
 
-    Generate Segmentation Result (Generate segmentation results as format *.nii.gz):
+    Generate Segmentation Results (Output results are saved with the ```*.nii.gz``` format):
     ```bash
     $ python3 utils/genSegmentationBraTS.py \
               --inPros_path /dataset/BraTS2020/predict_npy/ \
