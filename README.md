@@ -80,7 +80,10 @@ dataset/Pancreas/
 
     Generate Binary Map:
     ```bash 
-    $ python3 utils/genBinaryMap.py
+    $ python3 utils/genBinaryMap.py 
+              --inPros_path ../dataset/Pancreas/attention_maps/  
+              --outBinary_path ../dataset/Pancreas/binary_maps/ 
+              --threshold 0.9
     ```
     Generate Point Cloud data (Generate results as format *.ply, *pkl, *.npy):
     ```bash 
@@ -141,7 +144,11 @@ dataset/Pancreas/
 
     Generate Binary Map:
     ```bash 
-    $ python3 utils/genBinaryMap.py
+    $ python3 utils/genBinaryMap.py 
+              --inPros_path ../dataset/BraTS2020/attention_maps/  
+              --outBinary_path ../dataset/BraTS2020/binary_maps/ 
+              --threshold 0.9
+
     ```
     Generate Point Cloud data:
     ```bash 
