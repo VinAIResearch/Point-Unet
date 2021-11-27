@@ -98,9 +98,9 @@ optional arguments:
 
     Generate Binary Map:
     ```bash 
-    $ python3 utils/genBinaryMap.py 
-              --inPros_path dataset/Pancreas/attention_maps/  
-              --outBinary_path dataset/Pancreas/binary_maps/ 
+    $ python3 utils/genBinaryMap.py \
+              --inPros_path dataset/Pancreas/attention_maps/ \
+              --outBinary_path dataset/Pancreas/binary_maps/ \
               --threshold 0.9
     ```
     Generate Point Cloud data (Output results are saved with the ```*.ply```, ```*pkl```, ```*.npy``` format):
@@ -133,7 +133,7 @@ optional arguments:
               --data_PC_path dataset/Pancreas/PC_data \
               --data_3D_path dataset/Pancreas/ct \
               --checkpoint_path model_logs/Pancreas/fold3/snap-497 \
-              --results_path dataset/Pancreas/Results \
+              --results_path dataset/Pancreas/Results 
     ```
     Generate Segmentation Results (Output results are saved with the ```*.nii.gz``` format):
     ```bash
@@ -150,14 +150,14 @@ optional arguments:
 
     Train Attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py 
-              --logdir= train_log/unet3d 
+    $ python3 SaliencyAttention/train.py \
+              --logdir= train_log/unet3d \
               --gpu 0
     ```
     Predict Attention maps:
     ```bash 
-    $ python3 SaliencyAttention/train.py 
-              --load={path_model} 
+    $ python3 SaliencyAttention/train.py \
+              --load={path_model} \
               --gpu 0 
               --predict
     ```
@@ -165,9 +165,9 @@ optional arguments:
 
     Generate Binary Map:
     ```bash 
-    $ python3 utils/genBinaryMap.py 
-              --inPros_path dataset/BraTS2020/attention_maps/  
-              --outBinary_path dataset/BraTS2020/binary_maps/ 
+    $ python3 utils/genBinaryMap.py \
+              --inPros_path dataset/BraTS2020/attention_maps/  \
+              --outBinary_path dataset/BraTS2020/binary_maps/ \
               --threshold 0.9
 
     ```
