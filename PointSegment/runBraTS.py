@@ -190,14 +190,13 @@ class BraTS:
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--gpu', type=int, default=0, help='the number of GPUs to use [default: 0]')
-    parser.add_argument('--mode', type=str, default='train', help='options: train, test, vis')
+    parser.add_argument('--gpu', type=int, default=0, help='GPU ID [default: 0]')
+    parser.add_argument('--mode', type=str, default='train', help='options: train, test')
     parser.add_argument('--n_epoch', type=int, default=100, help='number of epoch')
     parser.add_argument('--logdir', type=str, default='./PointSegment/model_logs/BraTS20', help='path to the log directory')
-    parser.add_argument('--data_PC_path', type=str, default='./dataset/BraTS2020/PC_data', help='number of epoch')
-    # parser.add_argument('--data_3D_path', type=str, default='./dataset/BraTS2020', help='number of epoch')
-    parser.add_argument('--checkpoint_path', type=str, default='./PointSegment/model_logs/BraTS20/snapshots/snap-8261', help='number of epoch')
-    parser.add_argument('--results_path', type=str, default='../dataset/BraTS2020/predict_npy', help='number of epoch')
+    parser.add_argument('--data_PC_path', type=str, default='./dataset/BraTS2020/PC_data', help='path to the point cloud data')
+    parser.add_argument('--checkpoint_path', type=str, default='./PointSegment/model_logs/BraTS20/snapshots/snap-8261', help='path to the checkpoint')
+    parser.add_argument('--results_path', type=str, default='../dataset/BraTS2020/predict_npy', help='path to save segmentation results')
     FLAGS = parser.parse_args()
     
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"

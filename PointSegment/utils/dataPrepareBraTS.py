@@ -8,6 +8,8 @@ from multiprocessing import Process
 import concurrent.futures
 from tqdm import tqdm
 from scipy import ndimage
+import argparse
+
 
 BASE_DIR = dirname(abspath(__file__))
 ROOT_DIR = dirname(BASE_DIR)
@@ -17,25 +19,13 @@ sys.path.append(ROOT_DIR)
 from helper_ply import write_ply
 from helper_tool import DataProcessing as DP
 import time
+
 typeimg = ['t1ce','t1', 'flair', 't2', 'seg']
-
-
 sub_grid_size = 0.01
-
-
-dataset_path = "/home/ubuntu/Research/3D_Med_Seg/Volume_3D/BraTS_data/MICCAI_BraTS2020_TrainingData/training/HGG/"
-attention_mask_path =  "/home/ubuntu/Research/3D_Med_Seg/Volume_3D/BraTS_data/submission/tannh10/TanND_probs_nii/BraTS2018_val/val18_probs95/BraTS2018_val/"
-original_pc_folder = '/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/original_ply'
-sub_pc_folder =      '/home/ubuntu/Research/3D_Med_Seg/Point-Unet/dataset/BraTS2020/input0.01'
-if not exists(original_pc_folder):
-    os.makedirs(original_pc_folder) 
-if not exists(sub_pc_folder):
-    os.makedirs(sub_pc_folder) 
-
 out_format = '.ply'
-list_ID = os.listdir(dataset_path)
-parallel = True
+parallel = False
 dataTraining = True
+n_point = 365000
 
 
 def load_volume(ID):
@@ -133,13 +123,32 @@ def process_data_and_save(ID):
 if __name__ == '__main__':
 
 
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--n_point', type=int, default=365000, help='The number of points cloud ')
+    parser.add_argument('--data_3D_path', type=str, default=0, help='Path to the 3D volume data')
+    parser.add_argument('--outPC_path', type=str, default='train', help='Path of output points cloud data')
+    FLAGS = parser.parse_args()
+
+    dataset_path = FLAGS.data_3D_path
+    outPC_path = FLAGS.outPC_path
+    n_point = FLAGS.n_point
+
+    original_pc_folder = os.path.join(outPC_path,"original_ply") 
+    sub_pc_folder =  os.path.join(outPC_path,"input0.01")   
+    attention_mask_path =  None # you can modify to path binary of the attention network during the inference process
+
+    if not exists(original_pc_folder):
+        os.makedirs(original_pc_folder) 
+    if not exists(sub_pc_folder):
+        os.makedirs(sub_pc_folder) 
+    list_ID = os.listdir(dataset_path)
+
     if parallel:
         with concurrent.futures.ProcessPoolExecutor(50) as executor:
             tqdm(executor.map(process_data_and_save, list_ID), total=len(list_ID))
 
     else:
         for i,ID in enumerate(list_ID):
-            # conver_point_vs(load_volume(ID),ID)
             process_data_and_save(ID)
-            # exit()
         

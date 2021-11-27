@@ -82,8 +82,8 @@ if __name__ == '__main__':
 
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--inPros_path', type=str, default=0, help='the number of GPUs to use [default: 0]')
-    parser.add_argument('--outSegment_path', type=str, default='train', help='options: train, test, vis')
+    parser.add_argument('--inPros_path', type=str, default=0, help='path to the probability of PointSegment output')
+    parser.add_argument('--outSegment_path', type=str, default='train', help='path to the final segmentation results')
     FLAGS = parser.parse_args()
 
     pathProb = FLAGS.inPros_path

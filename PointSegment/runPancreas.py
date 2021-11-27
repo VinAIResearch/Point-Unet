@@ -174,15 +174,15 @@ class Pancreas:
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--gpu', type=int, default=0, help='the number of GPUs to use [default: 0]')
-    parser.add_argument('--mode', type=str, default='train', help='options: train, test, vis')
+    parser.add_argument('--gpu', type=int, default=0, help='GPU ID [default: 0]')
+    parser.add_argument('--mode', type=str, default='train', help='options: train, test')
     parser.add_argument('--logdir', type=str, default='./PointSegment/model_logs/Pancreas', help='path to the log directory')
     parser.add_argument('--fold', type=int, default=3, help='fold to cross-validation')
     parser.add_argument('--n_epoch', type=int, default=100, help='number of epoch')
-    parser.add_argument('--data_PC_path', type=str, default='./dataset/Pancreas/PC_data', help='number of epoch')
-    parser.add_argument('--data_3D_path', type=str, default='./dataset/Pancreas/ct', help='number of epoch')
-    parser.add_argument('--checkpoint_path', type=str, default='./PointSegment/model_logs/Pancreas/fold3/snap-497', help='number of epoch')
-    parser.add_argument('--results_path', type=str, default='dataset/Pancreas/Results/Pancreas', help='number of epoch')
+    parser.add_argument('--data_PC_path', type=str, default='./dataset/Pancreas/PC_data', help='path to the point cloud data')
+    parser.add_argument('--data_3D_path', type=str, default='./dataset/Pancreas/ct', help='path to the 3D volume data')
+    parser.add_argument('--checkpoint_path', type=str, default='./PointSegment/model_logs/Pancreas/fold3/snap-497', help='path to the checkpoint')
+    parser.add_argument('--results_path', type=str, default='dataset/Pancreas/Results/Pancreas', help='path to save segmentation results')
 
 
 

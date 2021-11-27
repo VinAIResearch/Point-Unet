@@ -83,8 +83,8 @@ def genSegmentation(pairInOut):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--inPros_path', type=str, default=0, help='the number of GPUs to use [default: 0]')
-    parser.add_argument('--outBinary_path', type=str, default='train', help='options: train, test, vis')
+    parser.add_argument('--inPros_path', type=str, default="/dataset/Pancreas/attention_maps/", help='path to the probability maps')
+    parser.add_argument('--outBinary_path', type=str, default='/dataset/Pancreas/binary_maps/', help='path to the output Binary maps')
     parser.add_argument('--threshold', type=float, default=0.9, help='options: train, test, vis')
 
     FLAGS = parser.parse_args()
@@ -94,9 +94,6 @@ if __name__ == '__main__':
     thresholdBinary = FLAGS.threshold
 
 
-    # pathProb = "/vinai/vuonghn/Research/3D_Med_Seg/dataset/BraTS2020/predict_npy/"
-    # path3DVolume = "/vinai/vuonghn/Research/3D_Med_Seg/dataset/BraTS2020/predict_nii"
-    # thresholdBinary = 0.6
 
     if not os.path.exists(path3DVolume):
         os.makedirs(path3DVolume)

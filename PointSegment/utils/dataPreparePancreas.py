@@ -8,6 +8,7 @@ from multiprocessing import Process
 import concurrent.futures
 from tqdm import tqdm
 from scipy import ndimage
+import argparse
 
 BASE_DIR = dirname(abspath(__file__))
 ROOT_DIR = dirname(BASE_DIR)
@@ -23,27 +24,13 @@ import random
 
 
 sub_grid_size = 0.01
-
-dataset_path = "/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1"
-data_nii = os.path.join(dataset_path,"ct")
-label_nii = os.path.join(dataset_path,"seg")
-original_pc_folder = '/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/PointCloud/original_ply/'
-sub_pc_folder =      '/home/ubuntu/Research/3D_Med_Seg/Point_3D/RandLA-Net/Model_log/normalize_xyz/Pancreas-CT_processed/Pancreas-CT_processed_v1/PointCloud/input0.01/'
-
-
-
-if not exists(original_pc_folder):
-    os.makedirs(original_pc_folder) 
-if not exists(sub_pc_folder):
-    os.makedirs(sub_pc_folder) 
-
 out_format = '.ply'
-list_ID = os.listdir(data_nii)
+n_point = 180000
 
-max_tumor = 0
+
+
+
 def load_volume(ID):
-    global max_tumor
-
     def itensity_normalize_one_volume(volume):
         """
         normalize the itensity of an nd volume based on the mean and std of nonzeor region
@@ -144,8 +131,8 @@ def convert_pc2ply(volume,ID):
 
 def sampling_convert_pc2ply(volume,ID):
 
-    # n_point = 180000
-    n_point = 230000
+    global n_point
+    print("n_point ", n_point)
     loop = 8
 
     img = volume[0]
@@ -185,23 +172,45 @@ def sampling_convert_pc2ply(volume,ID):
 def process_data_and_save(ID):
     sampling_convert_pc2ply(load_volume(ID),ID)
 
-parallel = False
-if parallel:
-    ID_s = []
-    for i in range(1, len(list_ID)+1): 
-        ID = str(i).zfill(4)
-        ID_s.append(ID)
-    with concurrent.futures.ProcessPoolExecutor(20) as executor:
-        tqdm(executor.map(process_data_and_save, ID_s), total=len(ID_s))
-
-else:
-    for i in range(1, len(list_ID),4):
-        ID = str(i).zfill(4)
-        if i ==0:
-            continue
-        print("ID ", ID)
-        process_data_and_save(ID)
-       
+if __name__ == '__main__':
 
 
-print("DONE")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--n_point', type=int, default=180000, help='The number of points cloud ')
+    parser.add_argument('--data_3D_path', type=str, default=0, help='Path to the 3D volume data')
+    parser.add_argument('--outPC_path', type=str, default='train', help='Path of output points cloud data')
+    FLAGS = parser.parse_args()
+
+    dataset_path = FLAGS.data_3D_path
+    outPC_path = FLAGS.outPC_path
+    n_point = FLAGS.n_point
+
+    data_nii = os.path.join(dataset_path,"ct")
+    label_nii = os.path.join(dataset_path,"seg") # you can modify to path binary of the attention network during the inference process
+    original_pc_folder = os.path.join(outPC_path,"original_ply") 
+    sub_pc_folder =  os.path.join(outPC_path,"input0.01")    
+
+    if not exists(original_pc_folder):
+        os.makedirs(original_pc_folder) 
+    if not exists(sub_pc_folder):
+        os.makedirs(sub_pc_folder) 
+
+
+    list_ID = os.listdir(data_nii)
+    parallel = False
+    if parallel:
+        ID_s = []
+        for i in range(1, len(list_ID)+1): 
+            ID = str(i).zfill(4)
+            ID_s.append(ID)
+        with concurrent.futures.ProcessPoolExecutor(20) as executor:
+            tqdm(executor.map(process_data_and_save, ID_s), total=len(ID_s))
+
+    else:
+        for i in range(1, len(list_ID),4):
+            ID = str(i).zfill(4)
+            if i ==0:
+                continue
+            print("ID ", ID)
+            process_data_and_save(ID)
+        
