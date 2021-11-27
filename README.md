@@ -58,6 +58,25 @@ dataset/Pancreas/
 ```
 
 ### Training and Evaluation
+Available arguments to setup our source code:
+```
+optional arguments:
+  --logdir LOGDIR             path to the log directory
+  --gpu                       GPU ID
+  --fold                      fold ID
+  --n_epoch                   number of epoch during training process
+  --n_point                   number of point cloud during sample data
+  --threshold 0.9             threshold to sample data
+  --mode                      model of process [train,test]
+  --inPros_path               path to the attention maps
+  --outBinary_path            path to the output binary segmentation
+  --data_PC_path              path to the Point Cloud data
+  --data_3D_path              path to the 3D Volumes data
+  --checkpoint_path           path to the checkpoint of model
+  --results_path              path to the results of Point Cloud segmentation
+  --outSegment_path           path to the final results on 3D Volumes
+```
+
 #### Setup on Pancreas
 
 * Saliency Attention Map
