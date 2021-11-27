@@ -80,16 +80,16 @@ dataset/Pancreas/
     Generate Binary Map:
     ```bash 
     $ python3 utils/genBinaryMap.py 
-              --inPros_path /dataset/Pancreas/attention_maps/  
-              --outBinary_path /dataset/Pancreas/binary_maps/ 
+              --inPros_path dataset/Pancreas/attention_maps/  
+              --outBinary_path dataset/Pancreas/binary_maps/ 
               --threshold 0.9
     ```
     Generate Point Cloud data (Output results are saved with the ```*.ply```, ```*pkl```, ```*.npy``` format):
     ```bash 
     $ python3 PointSegment/utils/dataPreparePancreas.py \
               --n_point 180000 \
-              --data_3D_path /dataset/Pancreas/ \
-              --outPC_path /dataset/Pancreas/PC_data
+              --data_3D_path dataset/Pancreas/ \
+              --outPC_path dataset/Pancreas/PC_data
     ```
    
 * PointSegment
@@ -119,8 +119,8 @@ dataset/Pancreas/
     Generate Segmentation Results (Output results are saved with the ```*.nii.gz``` format):
     ```bash
     $ python3 utils/genSegmentationPancreas.py \
-              --inPros_path /dataset/Pancreas/predict_npy/ \
-              --outSegment_path /dataset/Pancreas/predict_nii \
+              --inPros_path dataset/Pancreas/predict_npy/ \
+              --outSegment_path dataset/Pancreas/predict_nii \
     ```
     
 
@@ -132,7 +132,7 @@ dataset/Pancreas/
     Train Attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py 
-              --logdir=./train_log/unet3d 
+              --logdir= train_log/unet3d 
               --gpu 0
     ```
     Predict Attention maps:
@@ -147,8 +147,8 @@ dataset/Pancreas/
     Generate Binary Map:
     ```bash 
     $ python3 utils/genBinaryMap.py 
-              --inPros_path ../dataset/BraTS2020/attention_maps/  
-              --outBinary_path ../dataset/BraTS2020/binary_maps/ 
+              --inPros_path dataset/BraTS2020/attention_maps/  
+              --outBinary_path dataset/BraTS2020/binary_maps/ 
               --threshold 0.9
 
     ```
@@ -156,8 +156,8 @@ dataset/Pancreas/
     ```bash 
     $ python3 PointSegment/utils/dataPrepareBraTS.py \
           --n_point 365000 \
-          --data_3D_path /dataset/BraTS20/ \
-          --outPC_path /dataset/BraTS20/PC_data
+          --data_3D_path dataset/BraTS20/ \
+          --outPC_path dataset/BraTS20/PC_data
     ```
 * PointSegment
 
@@ -167,8 +167,8 @@ dataset/Pancreas/
               --gpu 0 \
               --mode train \ 
               --n_epoch 100 \
-              --logdir ./PointSegment/model_logs/BraTS20 \
-              --data_PC_path ../dataset/BraTS2020
+              --logdir PointSegment/model_logs/BraTS20 \
+              --data_PC_path dataset/BraTS2020
     ```
 
     Evaluation model :
@@ -176,16 +176,16 @@ dataset/Pancreas/
     $ python3 PointSegment/runBraTS.py \
         --gpu 0 \
         --mode test \ 
-        --data_PC_path ../dataset/BraTS2020 \ 
+        --data_PC_path dataset/BraTS2020 \ 
         --checkpoint_path model_logs/BraTS20/snapshots/snap-8261 \
-        --results_path ../dataset/BraTS2020/predict_npy
+        --results_path dataset/BraTS2020/predict_npy
     ```
 
     Generate Segmentation Results (Output results are saved with the ```*.nii.gz``` format):
     ```bash
     $ python3 utils/genSegmentationBraTS.py \
-              --inPros_path /dataset/BraTS2020/predict_npy/ \
-              --outSegment_path /dataset/BraTS2020/predict_nii \
+              --inPros_path dataset/BraTS2020/predict_npy/ \
+              --outSegment_path dataset/BraTS2020/predict_nii \
     ```
 
 ## <a name="results"></a> Results
