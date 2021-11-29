@@ -173,7 +173,7 @@ def offline_pred(pred_func, output_file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', help='comma separated list of GPU(s) to use. Default to all availalbe ones', default='0')
-    parser.add_argument('--load', help='load model for evaluation or training')
+    parser.add_argument('--checkpoint_path', help='load model for evaluation or training')
     parser.add_argument('--logdir', help='log directory', default='train_log/unet3d')
     parser.add_argument('--datadir', help='override config.BASEDIR')
     parser.add_argument('--visualize', action='store_true', help='visualize intermediate results')
