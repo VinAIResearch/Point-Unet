@@ -84,13 +84,13 @@ optional arguments:
     Train attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py \
-              --logdir=./train_log/unet3d \
+              --logdir= SaliencyAttention/model_logs/ \
               --gpu 0
     ```
     Predict attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py \
-              --load={path_model} \
+              --checkpoint_path= SaliencyAttention/model_logs/model-50000 \
               --gpu 0 \
               --predict
     ```
@@ -110,7 +110,6 @@ optional arguments:
               --data_3D_path dataset/Pancreas/ \
               --outPC_path dataset/Pancreas/PC_data
     ```
-   
 * PointSegment
 
     Training model: 
@@ -224,5 +223,5 @@ optional arguments:
     | BraTS20 |  78.98  |  89.71  |  82.75  |     83.81    |     11.73    |
 
 ## <a name="notes"></a> Acknowledgement
-This repository is borrow a lot of codes from [brats17](https://github.com/taigw/brats17/) and [RandLA-Net](https://github.com/QingyongHu/RandLA-Net).
+This repository is borrow a lot of codes from [3DUnet-Tensorflow-Brats18](https://github.com/tkuanlun350/3DUnet-Tensorflow-Brats18) and [RandLA-Net](https://github.com/QingyongHu/RandLA-Net).
 
