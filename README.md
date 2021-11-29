@@ -84,13 +84,13 @@ optional arguments:
     Train attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py \
-              --logdir= SaliencyAttention/model_logs/ \
+              --logdir SaliencyAttention/model_logs/ \
               --gpu 0
     ```
     Predict attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py \
-              --checkpoint_path= SaliencyAttention/model_logs/model-50000 \
+              --checkpoint_path SaliencyAttention/model_logs/model-50000 \
               --gpu 0 \
               --predict
     ```
