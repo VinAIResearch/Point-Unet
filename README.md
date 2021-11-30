@@ -84,7 +84,7 @@ optional arguments:
     Train attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py \
-              --logdir SaliencyAttention/model_logs/ \
+              --logdir SaliencyAttention/model_logs/Pancreas/ \
               --gpu 0
     ```
     Predict attention maps:
@@ -150,7 +150,7 @@ optional arguments:
     Train Attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py \
-              --logdir= train_log/unet3d \
+              --logdir SaliencyAttention/model_logs/BraTS/ \
               --gpu 0
     ```
     Predict Attention maps:
