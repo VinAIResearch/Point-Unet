@@ -120,7 +120,7 @@ optional arguments:
              --fold 3 \
              --n_epoch 100 \ 
              --data_PC_path dataset/Pancreas/PC_data \
-             --logdir model_logs/Pancreas/fold3
+             --logdir PointSegment/model_logs/Pancreas/fold3
     ```
 
     Evaluation model: 
@@ -131,7 +131,7 @@ optional arguments:
               --fold 3 \
               --data_PC_path dataset/Pancreas/PC_data \
               --data_3D_path dataset/Pancreas/ct \
-              --checkpoint_path model_logs/Pancreas/fold3/snap-497 \
+              --checkpoint_path PointSegment/model_logs/Pancreas/fold3/snap-497 \
               --results_path dataset/Pancreas/Results 
     ```
     Generate Segmentation Results (Output results are saved with the ```*.nii.gz``` format):
@@ -195,7 +195,7 @@ optional arguments:
         --gpu 0 \
         --mode test \ 
         --data_PC_path dataset/BraTS2020 \ 
-        --checkpoint_path model_logs/BraTS20/snapshots/snap-8261 \
+        --checkpoint_path PointSegment/model_logs/BraTS20/snapshots/snap-8261 \
         --results_path dataset/BraTS2020/predict_npy
     ```
 
