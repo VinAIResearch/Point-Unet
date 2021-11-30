@@ -90,7 +90,7 @@ optional arguments:
     Predict attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py \
-              --checkpoint_path SaliencyAttention/model_logs/model-50000 \
+              --checkpoint_path SaliencyAttention/model_logs/Pancreas/model-50000 \
               --gpu 0 \
               --predict
     ```
@@ -156,7 +156,7 @@ optional arguments:
     Predict Attention maps:
     ```bash 
     $ python3 SaliencyAttention/train.py \
-              --load={path_model} \
+              --checkpoint_path SaliencyAttention/model_logs/BraTS/model-50000 \
               --gpu 0 
               --predict
     ```
